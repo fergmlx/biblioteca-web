@@ -1,5 +1,7 @@
 .env
 **/.env
+backend/db.properties
+db.properties
 backend/target/
 backend/.idea/
 backend/*.iml
