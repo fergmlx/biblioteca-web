@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: biblioteca-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      POSTGRES_DB: ${POSTGRES_DB:-biblioteca}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - biblioteca_postgres_data:/var/lib/postgresql
+      - ./database/docker/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  flyway:
+    image: flyway/flyway:11.7.2
+    container_name: biblioteca-flyway
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-biblioteca}
+      FLYWAY_USER: ${POSTGRES_USER:-postgres}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD:-123}
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+    command: migrate
+    volumes:
+      - ./database/db/migrations:/flyway/sql:ro
+
+volumes:
+  biblioteca_postgres_data:

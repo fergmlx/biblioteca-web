@@ -1,0 +1,3816 @@
+{
+  "info": {
+    "name": "Biblioteca API CRUD completa",
+    "description": "Pruebas GET, POST, PUT, PATCH y DELETE para los 19 recursos. Seleccione Biblioteca Local y configure los valores UUID.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/biblioteca-backend",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Rol (roles)",
+      "description": "Identificador: id_rol",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"USUARIO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"USUARIO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"USUARIO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/roles/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pais (paises)",
+      "description": "Identificador: id_pais",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"México\",\n  \"codigo_iso\": \"MX\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"México\",\n  \"codigo_iso\": \"MX\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"México\",\n  \"codigo_iso\": \"MX\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/paises/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Genero (generos)",
+      "description": "Identificador: id_genero",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ciencia ficción\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ciencia ficción\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ciencia ficción\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/generos/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CondicionEjemplar (condiciones-ejemplar)",
+      "description": "Identificador: id_condicion_ejemplar",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"permite_prestamo\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"permite_prestamo\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo\",\n  \"permite_prestamo\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/condiciones-ejemplar/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "EstadoPrestamo (estados-prestamo)",
+      "description": "Identificador: id_estado_prestamo",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"ACTIVO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"ACTIVO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"ACTIVO\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/estados-prestamo/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TipoParticipacion (tipos-participacion)",
+      "description": "Identificador: id_tipo_participacion",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Autor\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Autor\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Autor\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tipos-participacion/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usuario (usuarios)",
+      "description": "Identificador: id_usuario",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios/{{id_usuario}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Usuario\",\n  \"apellido_paterno\": \"Prueba\",\n  \"apellido_materno\": \"Postman\",\n  \"correo\": \"postman@example.local\",\n  \"contrasena\": \"Prueba123!\",\n  \"telefono\": \"5551234567\",\n  \"membresia_activa\": true,\n  \"id_rol\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios/{{id_usuario}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Usuario\",\n  \"apellido_paterno\": \"Prueba\",\n  \"apellido_materno\": \"Postman\",\n  \"correo\": \"postman@example.local\",\n  \"contrasena\": \"Prueba123!\",\n  \"telefono\": \"5551234567\",\n  \"membresia_activa\": true,\n  \"id_rol\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios/{{id_usuario}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Usuario\",\n  \"apellido_paterno\": \"Prueba\",\n  \"apellido_materno\": \"Postman\",\n  \"correo\": \"postman@example.local\",\n  \"telefono\": \"5551234567\",\n  \"membresia_activa\": true,\n  \"id_rol\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/usuarios/{{id_usuario}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Autor (autores)",
+      "description": "Identificador: id_autor",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores/{{id_autor}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Ada\",\n  \"apellido_paterno\": \"Lovelace\",\n  \"apellido_materno\": \"\",\n  \"id_pais\": 1,\n  \"biografia\": \"Autora de prueba\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores/{{id_autor}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Ada\",\n  \"apellido_paterno\": \"Lovelace\",\n  \"apellido_materno\": \"\",\n  \"id_pais\": 1,\n  \"biografia\": \"Autora de prueba\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores/{{id_autor}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Ada\",\n  \"apellido_paterno\": \"Lovelace\",\n  \"apellido_materno\": \"\",\n  \"id_pais\": 1,\n  \"biografia\": \"Autora de prueba\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/autores/{{id_autor}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Libro (libros)",
+      "description": "Identificador: id_libro",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isbn\": \"9780000000099\",\n  \"titulo\": \"Libro Postman\",\n  \"editorial\": \"Editorial Prueba\",\n  \"anio_publicacion\": 2026,\n  \"idioma\": \"Español\",\n  \"sinopsis\": \"Creado desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isbn\": \"9780000000099\",\n  \"titulo\": \"Libro Postman\",\n  \"editorial\": \"Editorial Prueba\",\n  \"anio_publicacion\": 2026,\n  \"idioma\": \"Español\",\n  \"sinopsis\": \"Creado desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isbn\": \"9780000000099\",\n  \"titulo\": \"Libro Postman\",\n  \"editorial\": \"Editorial Prueba\",\n  \"anio_publicacion\": 2026,\n  \"idioma\": \"Español\",\n  \"sinopsis\": \"Creado desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LibroAutor (libros-autores)",
+      "description": "Identificador: id_libro/id_autor/id_tipo_participacion",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores/{{id_libro}}/{{id_autor}}/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_autor\": \"{{id_autor}}\",\n  \"id_tipo_participacion\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores/{{id_libro}}/{{id_autor}}/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_autor\": \"{{id_autor}}\",\n  \"id_tipo_participacion\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores/{{id_libro}}/{{id_autor}}/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_autor\": \"{{id_autor}}\",\n  \"id_tipo_participacion\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-autores/{{id_libro}}/{{id_autor}}/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LibroGenero (libros-generos)",
+      "description": "Identificador: id_libro/id_genero",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos/{{id_libro}}/{{id_genero}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_genero\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos/{{id_libro}}/{{id_genero}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_genero\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos/{{id_libro}}/{{id_genero}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"id_genero\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/libros-generos/{{id_libro}}/{{id_genero}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ejemplar (ejemplares)",
+      "description": "Identificador: id_libro/num_ejemplar",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares/{{id_libro}}/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1,\n  \"codigo_inventario\": \"PM-000001\",\n  \"ubicacion\": \"Sala A\",\n  \"id_condicion_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares/{{id_libro}}/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1,\n  \"codigo_inventario\": \"PM-000001\",\n  \"ubicacion\": \"Sala A\",\n  \"id_condicion_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares/{{id_libro}}/1",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1,\n  \"codigo_inventario\": \"PM-000001\",\n  \"ubicacion\": \"Sala A\",\n  \"id_condicion_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/ejemplares/{{id_libro}}/1"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CirculoLectura (circulos-lectura)",
+      "description": "Identificador: id_circulo",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura/{{id_circulo}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Círculo Postman\",\n  \"descripcion\": \"Grupo de prueba\",\n  \"tema\": \"Lectura técnica\",\n  \"dia_semana\": \"Viernes\",\n  \"hora\": \"18:00:00\",\n  \"cupo_maximo\": 12,\n  \"fecha_inicio\": \"2026-11-20\",\n  \"fecha_fin\": null,\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura/{{id_circulo}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Círculo Postman\",\n  \"descripcion\": \"Grupo de prueba\",\n  \"tema\": \"Lectura técnica\",\n  \"dia_semana\": \"Viernes\",\n  \"hora\": \"18:00:00\",\n  \"cupo_maximo\": 12,\n  \"fecha_inicio\": \"2026-11-20\",\n  \"fecha_fin\": null,\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura/{{id_circulo}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Círculo Postman\",\n  \"descripcion\": \"Grupo de prueba\",\n  \"tema\": \"Lectura técnica\",\n  \"dia_semana\": \"Viernes\",\n  \"hora\": \"18:00:00\",\n  \"cupo_maximo\": 12,\n  \"fecha_inicio\": \"2026-11-20\",\n  \"fecha_fin\": null,\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/circulos-lectura/{{id_circulo}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SolicitudPrestamo (solicitudes-prestamo)",
+      "description": "Identificador: id_solicitud",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo/{{id_solicitud}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"estado\": \"PENDIENTE\",\n  \"observaciones\": \"Solicitud creada por Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo/{{id_solicitud}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"estado\": \"PENDIENTE\",\n  \"observaciones\": \"Solicitud creada por Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo/{{id_solicitud}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"estado\": \"PENDIENTE\",\n  \"observaciones\": \"Solicitud creada por Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/solicitudes-prestamo/{{id_solicitud}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "InscripcionCirculo (inscripciones-circulo)",
+      "description": "Identificador: id_inscripcion",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo/{{id_inscripcion}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_circulo\": \"{{id_circulo}}\",\n  \"es_excepcion_cupo\": false,\n  \"motivo_excepcion\": null,\n  \"id_usuario_autoriza\": null\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo/{{id_inscripcion}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_circulo\": \"{{id_circulo}}\",\n  \"es_excepcion_cupo\": false,\n  \"motivo_excepcion\": null,\n  \"id_usuario_autoriza\": null\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo/{{id_inscripcion}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_circulo\": \"{{id_circulo}}\",\n  \"es_excepcion_cupo\": false,\n  \"motivo_excepcion\": null,\n  \"id_usuario_autoriza\": null\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones-circulo/{{id_inscripcion}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Prestamo (prestamos)",
+      "description": "Identificador: id_prestamo",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos/{{id_prestamo}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha_limite\": \"2026-12-20T18:00:00Z\",\n  \"id_estado_prestamo\": 1,\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos/{{id_prestamo}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha_limite\": \"2026-12-20T18:00:00Z\",\n  \"id_estado_prestamo\": 1,\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos/{{id_prestamo}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_estado_prestamo\": 1,\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"num_ejemplar\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/prestamos/{{id_prestamo}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Favorito (favoritos)",
+      "description": "Identificador: id_usuario/id_libro",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos/{{id_usuario}}/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos/{{id_usuario}}/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos/{{id_usuario}}/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/favoritos/{{id_usuario}}/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Resenia (resenas)",
+      "description": "Identificador: id_usuario/id_libro",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas/{{id_usuario}}/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas/{{id_usuario}}/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas/{{id_usuario}}/{{id_libro}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"id_libro\": \"{{id_libro}}\",\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente desde Postman\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/resenas/{{id_usuario}}/{{id_libro}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TokenRecuperacion (tokens-recuperacion)",
+      "description": "Identificador: id_token",
+      "item": [
+        {
+          "name": "GET - listar",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - por identificador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion/{{id_token}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 404]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"token_hash\": \"postman-token-placeholder\",\n  \"fecha_expiracion\": \"2026-12-20T18:00:00Z\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([201, 200, 400, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });",
+                  "if ([200,201].includes(pm.response.code)) {",
+                  "  try {",
+                  "    const body = pm.response.json();",
+                  "    const mappings = {",
+                  "      idUsuario: 'id_usuario', idAutor: 'id_autor', idLibro: 'id_libro',",
+                  "      idGenero: 'id_genero', idCirculo: 'id_circulo',",
+                  "      idSolicitud: 'id_solicitud', idInscripcion: 'id_inscripcion',",
+                  "      idPrestamo: 'id_prestamo', idToken: 'id_token'",
+                  "    };",
+                  "    Object.keys(mappings).forEach(function (key) {",
+                  "      if (body && body[key]) pm.environment.set(mappings[key], body[key]);",
+                  "    });",
+                  "  } catch (error) {}",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT - reemplazar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion/{{id_token}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"token_hash\": \"postman-token-placeholder\",\n  \"fecha_expiracion\": \"2026-12-20T18:00:00Z\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 201, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH - modificar parcialmente",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion/{{id_token}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_usuario\": \"{{id_usuario}}\",\n  \"token_hash\": \"postman-token-placeholder\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([200, 204, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE - eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/tokens-recuperacion/{{id_token}}"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Estado HTTP esperado', function () { pm.expect([204, 200, 400, 404, 409]).to.include(pm.response.code); });",
+                  "pm.test('Respuesta compatible', function () { if (pm.response.code !== 204) pm.response.to.be.json; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
