@@ -1,0 +1,80 @@
+@if (circle(); as circle) {
+  <div class="page-shell">
+    <button type="button" class="back-link" (click)="ui.navigate('/circulos')">← Volver a círculos</button>
+    <div class="circle-detail">
+      <div class="circle-detail-main">
+        <div class="circle-detail-hero">
+          <div>
+            <span class="eyebrow light">Círculo de lectura</span>
+            <h1>{{ circle.name }}</h1>
+            <p>{{ circle.description }}</p>
+          </div>
+          <app-icon name="users" [size]="80" />
+        </div>
+        <section class="card">
+          <h2>Detalles del círculo</h2>
+          <div class="detail-data">
+            @for (d of data(); track d[0]) {
+              <div>
+                <small>{{ d[0] }}</small
+                ><strong>{{ d[1] }}</strong>
+              </div>
+            }
+          </div>
+          @if (book(); as book) {
+            <button type="button" class="circle-book-link" (click)="ui.navigate('/libros/' + book.id)">
+              <app-book-cover [title]="book.title" [color]="book.color" size="small" />
+              <span
+                ><small>Lectura del círculo</small><strong>{{ book.title }}</strong
+                ><em>{{ book.author }}</em></span
+              >
+              <app-icon name="arrow" [size]="17" />
+            </button>
+          }
+          <h3>¿Qué puedes esperar?</h3>
+          <p class="muted">
+            Sesiones guiadas, intercambio respetuoso de ideas y una selección mensual de lecturas. No necesitas
+            experiencia previa, solo ganas de leer y compartir.
+          </p>
+        </section>
+      </div>
+      <section class="card enrollment-card">
+        <span class="eyebrow">Inscripción</span>
+        <h2>Reserva tu lugar</h2>
+        <div class="seats">
+          <strong>{{ circle.seatsLeft }}</strong
+          ><span>lugares disponibles</span>
+        </div>
+        <div class="capacity large"><span [style.width.%]="pct(circle.enrolled, circle.capacity)"></span></div>
+        <div class="enrollment-state"><span>Estado</span><app-status [text]="state()" /></div>
+        @if (enrollment()) {
+          <button appBtn class="full" variant="secondary" (click)="cancel()">Cancelar inscripción</button>
+          <small>{{
+            state() === "Pendiente"
+              ? "La biblioteca confirmará tu lugar en breve."
+              : "¡Tu lugar está confirmado! Te esperamos."
+          }}</small>
+        } @else {
+          <button appBtn class="full" icon="check" (click)="start()" [disabled]="circle.seatsLeft === 0">
+            {{ circle.seatsLeft === 0 ? "Cupo completo" : "Confirmar inscripción" }}
+          </button>
+          <small>Podrás cancelar tu inscripción desde “Mis círculos”.</small>
+        }
+      </section>
+    </div>
+    @if (confirming()) {
+      <app-modal title="Confirmar inscripción" (closed)="confirming.set(false)">
+        <p class="modal-text">
+          Te inscribirás a <strong>{{ circle.name }}</strong>, los {{ circle.day.toLowerCase() }} a las
+          {{ circle.time }}. Tu inscripción quedará pendiente hasta que la biblioteca la confirme.
+        </p>
+        <ng-container modalFooter>
+          <button appBtn variant="secondary" (click)="confirming.set(false)">Cancelar</button>
+          <button appBtn icon="check" (click)="register()">Inscribirme</button>
+        </ng-container>
+      </app-modal>
+    }
+  </div>
+} @else {
+  <app-not-found />
+}

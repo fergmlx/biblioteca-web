@@ -1,0 +1,87 @@
+<app-table-toolbar
+  title="Solicitudes de préstamo"
+  description="Revisa lo que piden los lectores y asigna un ejemplar físico."
+/>
+@if (created()) {
+  <div class="banner">
+    <app-icon name="check" />
+    <span>{{ created() }}</span>
+    <button appBtn class="small admin-button" (click)="ui.navigate('/admin/prestamos')">Ver préstamos</button>
+  </div>
+}
+<app-admin-tabs [(value)]="tab" [tabs]="tabs()" />
+<app-data-card
+  [headers]="['Usuario', 'Libro', 'Fecha', 'Estado', 'Copias libres', 'Acciones']"
+  [isEmpty]="rows().length === 0"
+>
+  <app-empty-state empty title="Sin solicitudes" text="No hay solicitudes en esta categoría." />
+  @for (r of rows(); track r.id) {
+    <tr>
+      <td><app-user-link [id]="r.userId" /></td>
+      <td>
+        <strong>{{ bookTitle(r.bookId) }}</strong>
+        @if (r.notes) {
+          <span class="cell-sub">{{ r.notes }}</span>
+        }
+      </td>
+      <td>{{ fmt(r.date) }}</td>
+      <td><app-status [text]="r.status" /></td>
+      <td>
+        <span [class]="'free-pill' + (free(r.bookId) === 0 ? ' none' : '')">{{ free(r.bookId) }}</span>
+      </td>
+      <td>
+        @if (r.status === "Pendiente") {
+          <div class="row-buttons">
+            <button appBtn class="small admin-button" (click)="openModal(r, true)">Aprobar</button>
+            <button appBtn class="small" variant="ghost" (click)="openModal(r, false)">Rechazar</button>
+          </div>
+        } @else {
+          <span class="muted-cell">Respondida {{ fmt(r.answered) }}</span>
+        }
+      </td>
+    </tr>
+  }
+</app-data-card>
+@if (modal(); as m) {
+  <app-modal [admin]="true" [title]="m.approve ? 'Aprobar solicitud' : 'Rechazar solicitud'" (closed)="modal.set(null)">
+    <p class="modal-text">
+      <strong>{{ auth.userName(m.request.userId) }}</strong> solicita
+      <strong>{{ bookTitle(m.request.bookId) }}</strong>.
+    </p>
+    @if (m.approve) {
+      @if (freeCopies().length) {
+        <app-select label="Ejemplar a asignar" [options]="copyOptions()" [(value)]="copy" />
+      } @else {
+        <div class="banner warn">
+          <span>No hay ejemplares libres de este libro. Registra uno nuevo o espera una devolución.</span>
+          <button
+            appBtn
+            class="small"
+            variant="secondary"
+            (click)="ui.navigate('/admin/ejemplares?libro=' + m.request.bookId)"
+          >
+            Ir a ejemplares
+          </button>
+        </div>
+      }
+    }
+    <app-textarea
+      [label]="m.approve ? 'Observaciones (opcional)' : 'Motivo del rechazo *'"
+      [rows]="3"
+      [(value)]="notes"
+      [placeholder]="m.approve ? 'Ej. Recoger en mostrador' : 'Explica al usuario por qué se rechaza'"
+    />
+    <ng-container modalFooter>
+      <button appBtn variant="secondary" (click)="modal.set(null)">Cancelar</button>
+      <button
+        appBtn
+        [class]="m.approve ? 'admin-button' : ''"
+        [variant]="m.approve ? 'primary' : 'danger'"
+        [disabled]="m.approve && freeCopies().length === 0"
+        (click)="submit()"
+      >
+        {{ m.approve ? "Aprobar y crear préstamo" : "Rechazar solicitud" }}
+      </button>
+    </ng-container>
+  </app-modal>
+}

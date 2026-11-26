@@ -1,0 +1,57 @@
+@if (book(); as book) {
+  <app-table-toolbar
+    title="Gestión de ejemplares"
+    description="Controla las copias físicas, su ubicación y condición."
+    action="Nuevo ejemplar"
+    (act)="open({ bookId: book.id, code: '', location: '', condition: 'Bueno' })"
+  />
+  <section class="card selected-book">
+    <app-book-cover [title]="book.title" [color]="book.color" size="small" />
+    <div>
+      <small>Ejemplares de</small><strong>{{ book.title }}</strong>
+      <span>ISBN {{ book.isbn }} · {{ view()?.copiesFree ?? 0 }} libres de {{ view()?.copiesTotal ?? 0 }}</span>
+    </div>
+    <app-select
+      [value]="'' + book.id"
+      [options]="bookOptions()"
+      (valueChange)="ui.navigate('/admin/ejemplares?libro=' + $event)"
+    />
+  </section>
+  <app-data-card
+    [headers]="['N.º ejemplar', 'Código de inventario', 'Ubicación', 'Condición', 'Estado', 'Acciones']"
+    [isEmpty]="items().length === 0"
+  >
+    <app-empty-state empty title="Sin ejemplares" text="Este libro aún no tiene ejemplares registrados." />
+    @for (item of items(); track item.number) {
+      <tr>
+        <td>
+          <strong>#{{ item.number }}</strong>
+        </td>
+        <td>
+          <span class="code">{{ item.code }}</span>
+        </td>
+        <td>{{ item.location || "—" }}</td>
+        <td><app-status [text]="item.condition" /></td>
+        <td><app-status [text]="item.status" /></td>
+        <td><app-actions edit del (edited)="open(item)" (deleted)="remove(item)" /></td>
+      </tr>
+    }
+  </app-data-card>
+  @if (editing(); as e) {
+    <app-modal [admin]="true" [title]="e.number ? 'Editar ejemplar' : 'Nuevo ejemplar'" (closed)="editing.set(null)">
+      <app-field label="Código de inventario" [required]="true" [(value)]="code" placeholder="Ej. A004" />
+      <app-field label="Ubicación" [required]="true" [(value)]="location" placeholder="Ej. Sala A · E3" />
+      <app-select label="Condición" [options]="conditions" [(value)]="condition" />
+      <ng-container modalFooter>
+        <button appBtn variant="secondary" (click)="editing.set(null)">Cancelar</button>
+        <button appBtn class="admin-button" (click)="save()">Guardar</button>
+      </ng-container>
+    </app-modal>
+  }
+} @else {
+  <app-table-toolbar
+    title="Gestión de ejemplares"
+    description="Controla las copias físicas, su ubicación y condición."
+  />
+  <app-empty-state title="No hay libros" text="Crea un libro para registrar sus ejemplares." />
+}

@@ -1,0 +1,156 @@
+@if (missing()) {
+  <app-admin-not-found what="Libro" back="Volver a libros" to="/admin/libros" />
+} @else {
+  <app-crumbs
+    [items]="[{ label: 'Libros', to: '/admin/libros' }, { label: book() ? 'Editar libro' : 'Nuevo libro' }]"
+  />
+  <app-page-header
+    eyebrow="Gestión de libros"
+    [title]="book() ? 'Editar: ' + book()!.title : 'Crear nuevo libro'"
+    description="Completa la información bibliográfica y de catalogación."
+  />
+  <form (submit)="submit($event)">
+    <div class="admin-form-grid">
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>01</span>
+          <div>
+            <h2>Información principal</h2>
+            <p>Datos que identifican la obra.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <app-field label="ISBN" [required]="true" [value]="f().isbn" (valueChange)="set('isbn', $event)" />
+          <app-field label="Título" [required]="true" [value]="f().title" (valueChange)="set('title', $event)" />
+          <app-field
+            label="Editorial"
+            [required]="true"
+            [value]="f().publisher"
+            (valueChange)="set('publisher', $event)"
+          />
+          <app-select
+            label="Idioma"
+            [options]="languages"
+            [value]="f().language"
+            (valueChange)="set('language', $event)"
+          />
+          <app-field
+            label="Año de publicación"
+            [required]="true"
+            type="number"
+            [value]="f().year"
+            (valueChange)="set('year', $event)"
+          />
+          <div class="span-2">
+            <app-textarea
+              label="Sinopsis *"
+              [value]="f().description"
+              (valueChange)="set('description', $event)"
+              placeholder="Escribe una descripción breve del libro..."
+            />
+          </div>
+        </div>
+      </section>
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>02</span>
+          <div>
+            <h2>Portada</h2>
+            <p>Imagen y color en el catálogo.</p>
+          </div>
+        </div>
+        <label class="upload-box" style="height: 110px">
+          <app-icon name="plus" [size]="25" />
+          <strong>{{ coverUrl() ? "Cambiar imagen" : "Subir imagen" }}</strong>
+          <small>PNG o JPG, máximo 5 MB</small>
+          <input type="file" accept="image/*" (change)="pickFile($event)" />
+        </label>
+        <div class="cover-preview">
+          @if (coverUrl()) {
+            <img [src]="coverUrl()" alt="Vista previa de portada" />
+          } @else {
+            <app-book-cover [title]="f().title || 'Título del libro'" [color]="f().color" size="medium" />
+          }
+        </div>
+        <div class="field">
+          <span>Color de portada</span>
+          <div class="swatches">
+            @for (color of colors; track color) {
+              <button
+                type="button"
+                [class]="f().color === color ? 'active' : ''"
+                [style.background]="color"
+                aria-label="Elegir color"
+                (click)="set('color', color)"
+              ></button>
+            }
+          </div>
+        </div>
+      </section>
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>03</span>
+          <div>
+            <h2>Autores</h2>
+            <p>Puedes agregar más de uno.</p>
+          </div>
+        </div>
+        @for (value of authorIds(); track $index) {
+          <div class="repeat-field">
+            <app-select
+              [label]="'Autor ' + ($index + 1)"
+              [value]="value"
+              [options]="authorOptions()"
+              (valueChange)="replace(authorIds, $index, $event)"
+            />
+            @if (authorIds().length > 1) {
+              <button type="button" aria-label="Quitar autor" (click)="remove(authorIds, $index)">
+                <app-icon name="trash" />
+              </button>
+            }
+          </div>
+        }
+        <div class="row-buttons">
+          <button appBtn variant="secondary" icon="plus" (click)="authorIds.set(authorIds().concat(''))">
+            Agregar autor
+          </button>
+          <button appBtn variant="ghost" (click)="ui.navigate('/admin/autores/nuevo')">Crear autor nuevo</button>
+        </div>
+      </section>
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>04</span>
+          <div>
+            <h2>Géneros</h2>
+            <p>Clasificación para los filtros.</p>
+          </div>
+        </div>
+        @for (value of genres(); track $index) {
+          <div class="repeat-field">
+            <app-select
+              [label]="'Género ' + ($index + 1)"
+              [value]="value"
+              [options]="genreOptions()"
+              (valueChange)="replace(genres, $index, $event)"
+            />
+            @if (genres().length > 1) {
+              <button type="button" aria-label="Quitar género" (click)="remove(genres, $index)">
+                <app-icon name="trash" />
+              </button>
+            }
+          </div>
+        }
+        <div class="row-buttons">
+          <button appBtn variant="secondary" icon="plus" (click)="genres.set(genres().concat(''))">
+            Agregar género
+          </button>
+          <button appBtn variant="ghost" (click)="ui.navigate('/admin/generos')">Administrar géneros</button>
+        </div>
+      </section>
+    </div>
+    <div class="form-footer">
+      <button appBtn variant="secondary" (click)="ui.navigate('/admin/libros')">Cancelar</button>
+      <button appBtn type="submit" class="admin-button">{{ book() ? "Guardar cambios" : "Crear libro" }}</button>
+    </div>
+  </form>
+}

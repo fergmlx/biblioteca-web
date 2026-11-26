@@ -1,0 +1,54 @@
+<app-table-toolbar
+  title="Círculos de lectura"
+  description="Crea y organiza los espacios de encuentro de la comunidad."
+  action="Nuevo círculo"
+  (act)="ui.navigate('/admin/circulos/nuevo')"
+/>
+@if (circleService.circles().length === 0) {
+  <app-empty-state title="Sin círculos" text="Crea el primer círculo de lectura." />
+} @else {
+  <div class="admin-circle-list">
+    @for (circle of circleService.circles(); track circle.id; let index = $index) {
+      @let book = bookOf(circle.bookId);
+      <section class="card admin-circle-item">
+        <div [class]="'admin-circle-icon circle-' + ((index % 3) + 1)"><app-icon name="users" [size]="30" /></div>
+        <div class="admin-circle-info">
+          <div>
+            <app-status [text]="circle.active ? 'Activo' : 'Inactivo'" />
+            <h2>{{ circle.name }}</h2>
+            <p>{{ book ? book.title : circle.topic }}</p>
+          </div>
+          <div class="admin-circle-facts">
+            <span><app-icon name="calendar" [size]="16" />{{ circle.day }}</span>
+            <span><app-icon name="clock" [size]="16" />{{ circle.time }}</span>
+            <span
+              ><app-icon name="users" [size]="16" />{{ circle.enrolled }}/{{ circle.capacity }} ·
+              {{ circle.seatsLeft }} libres</span
+            >
+            <span>{{ fmt(circle.start) }} — {{ fmt(circle.end) }}</span>
+          </div>
+          <div class="capacity circle-admin-cap">
+            <span [style.width.%]="pct(circle.enrolled, circle.capacity)"></span>
+          </div>
+          @if (circle.bookId) {
+            <div class="circle-book">
+              Libro del círculo:
+              <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + circle.bookId)">
+                {{ book?.title || "Libro eliminado" }}
+              </button>
+            </div>
+          }
+        </div>
+        <app-actions
+          view
+          edit
+          toggle
+          [active]="circle.active"
+          (viewed)="ui.navigate('/admin/circulos/' + circle.id)"
+          (edited)="ui.navigate('/admin/circulos/' + circle.id + '/editar')"
+          (toggled)="toggle(circle.id, circle.active, circle.name)"
+        />
+      </section>
+    }
+  </div>
+}

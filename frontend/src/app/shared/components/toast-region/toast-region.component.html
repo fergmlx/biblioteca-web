@@ -1,0 +1,8 @@
+<div class="toast-region" aria-live="polite">
+  @for (toast of ui.toasts(); track toast.id) {
+    <div [class]="'toast ' + (toast.type === 'error' ? 'error' : '')">
+      <span><app-icon [name]="toast.type === 'error' ? 'x' : 'check'" [size]="15" /></span>
+      {{ toast.message }}
+    </div>
+  }
+</div>

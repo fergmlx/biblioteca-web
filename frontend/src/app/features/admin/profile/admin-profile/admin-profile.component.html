@@ -1,0 +1,36 @@
+@if (auth.user(); as mine) {
+  <div class="page-header">
+    <div>
+      <h1>Mi perfil</h1>
+      <p>Datos de tu cuenta de administración.</p>
+    </div>
+  </div>
+  <section class="card user-hero">
+    <div class="avatar">{{ initials(mine.name, mine.last) }}</div>
+    <div class="info">
+      <h2>{{ mine.name }} {{ mine.last }}</h2>
+      <app-status text="Administrador" />
+      <div class="meta">
+        <span>{{ mine.email }}</span
+        ><span>Desde {{ fmt(mine.joined) }}</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button appBtn variant="secondary" icon="edit" (click)="editing.set(!editing())">
+        {{ editing() ? "Cancelar" : "Editar datos" }}
+      </button>
+      <button appBtn variant="secondary" icon="logout" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </section>
+  <section class="card admin-profile-form">
+    <div class="form-grid">
+      <app-field label="Nombre(s)" [(value)]="name" [disabled]="!editing()" />
+      <app-field label="Apellidos" [(value)]="last" [disabled]="!editing()" />
+      <app-field label="Correo electrónico" [value]="mine.email" [disabled]="true" />
+      <app-field label="Teléfono" [(value)]="phone" [disabled]="!editing()" />
+    </div>
+    @if (editing()) {
+      <button appBtn class="admin-button" (click)="save()">Guardar cambios</button>
+    }
+  </section>
+}

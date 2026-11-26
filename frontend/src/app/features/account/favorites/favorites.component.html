@@ -1,0 +1,33 @@
+<div class="page-shell">
+  <app-page-header
+    eyebrow="Mi biblioteca"
+    title="Mis favoritos"
+    description="Los libros que guardaste para leer después."
+  >
+    <button appBtn (click)="ui.navigate('/catalogo')">Explorar más libros</button>
+  </app-page-header>
+  @if (items().length) {
+    <div class="favorite-list">
+      @for (book of items(); track book.id) {
+        <section class="card favorite-item">
+          <app-book-cover [title]="book.title" [color]="book.color" />
+          <div>
+            <app-status [text]="book.available ? 'Disponible' : 'En préstamo'" />
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+            <span class="genre-label">{{ book.genre }} · {{ book.year }}</span>
+          </div>
+          <div class="favorite-actions">
+            <button appBtn variant="secondary" (click)="ui.navigate('/libros/' + book.id)">Ver detalle</button>
+            <button appBtn variant="ghost" icon="trash" (click)="remove(book.id, book.title)">Eliminar</button>
+          </div>
+        </section>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      title="Aún no tienes favoritos"
+      text="Guarda libros desde el catálogo para encontrarlos fácilmente."
+    />
+  }
+</div>

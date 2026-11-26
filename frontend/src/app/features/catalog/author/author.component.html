@@ -1,0 +1,38 @@
+@if (author(); as author) {
+  <div class="page-shell">
+    <button type="button" class="back-link" (click)="back()">← Volver</button>
+    <section class="card author-hero">
+      <span class="author-avatar">{{ initials(author.name, author.last) }}</span>
+      <div>
+        <span class="eyebrow">Autor</span>
+        <h1>{{ catalog.authorName(author) }}</h1>
+        <div class="author-meta">
+          <span><app-icon name="pin" [size]="16" /> {{ author.country }}</span>
+          <span
+            ><app-icon name="calendar" [size]="16" /> {{ year(author.birth)
+            }}{{ author.death ? " – " + year(author.death) : "" }}</span
+          >
+          <span><app-icon name="book" [size]="16" /> {{ works().length }} en el catálogo</span>
+        </div>
+        <p>{{ author.bio || "Aún no hay biografía registrada." }}</p>
+      </div>
+    </section>
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Obras</span>
+        <h2>Libros de {{ author.name }}</h2>
+      </div>
+    </div>
+    @if (works().length) {
+      <div class="catalog-grid wide">
+        @for (book of works(); track book.id) {
+          <app-book-card [book]="book" />
+        }
+      </div>
+    } @else {
+      <app-empty-state title="Sin libros por ahora" text="Pronto agregaremos obras de este autor." />
+    }
+  </div>
+} @else {
+  <app-not-found />
+}

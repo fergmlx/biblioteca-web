@@ -1,0 +1,10 @@
+<label class="field">
+  @if (label()) {
+    <span>{{ label() }}</span>
+  }
+  <select [value]="value()" (change)="value.set($any($event.target).value)">
+    @for (o of items(); track o.value) {
+      <option [value]="o.value" [selected]="o.value === value()">{{ o.label }}</option>
+    }
+  </select>
+</label>

@@ -1,0 +1,17 @@
+@if (ui.dialog(); as dialog) {
+  <app-modal [title]="dialog.title" (closed)="ui.closeDialog(false)">
+    @if (dialog.message) {
+      <p class="modal-text">{{ dialog.message }}</p>
+    }
+    <ng-container modalFooter>
+      <button class="btn btn-secondary" type="button" (click)="ui.closeDialog(false)">Cancelar</button>
+      <button
+        [class]="'btn ' + (dialog.tone === 'danger' ? 'btn-danger' : 'btn-primary')"
+        type="button"
+        (click)="ui.closeDialog(true)"
+      >
+        {{ dialog.confirmLabel || "Confirmar" }}
+      </button>
+    </ng-container>
+  </app-modal>
+}

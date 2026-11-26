@@ -1,0 +1,111 @@
+<div class="auth-page">
+  <div class="auth-panel">
+    <button type="button" class="brand auth-brand" (click)="ui.navigate('/')">
+      <span class="brand-icon"><app-icon name="book" /></span>
+      Biblioteca<span class="brand-dot">.</span>
+    </button>
+    <span class="eyebrow">{{ isLogin() ? "Qué gusto verte" : "Únete a la comunidad" }}</span>
+    <h1>{{ isLogin() ? "Inicia sesión" : "Crea tu cuenta" }}</h1>
+    <p>
+      {{
+        isLogin()
+          ? "Continúa explorando todas tus lecturas."
+          : "Regístrate para solicitar libros y unirte a los círculos de lectura."
+      }}
+    </p>
+    <form (submit)="submit($event)" novalidate>
+      @if (!isLogin()) {
+        <app-field
+          label="Nombre(s)"
+          [required]="true"
+          [value]="v('name')"
+          (valueChange)="set('name', $event)"
+          [error]="errors()['name']"
+        />
+        <div class="form-grid">
+          <app-field
+            label="Apellido paterno"
+            [required]="true"
+            [value]="v('last')"
+            (valueChange)="set('last', $event)"
+            [error]="errors()['last']"
+          />
+          <app-field
+            label="Apellido materno"
+            [required]="true"
+            [value]="v('maternal')"
+            (valueChange)="set('maternal', $event)"
+            [error]="errors()['maternal']"
+          />
+        </div>
+      }
+      <app-field
+        label="Correo electrónico"
+        type="email"
+        [required]="true"
+        placeholder="nombre@correo.com"
+        [value]="v('email')"
+        (valueChange)="set('email', $event)"
+        [error]="errors()['email']"
+      />
+      @if (!isLogin()) {
+        <app-field
+          label="Teléfono"
+          [required]="true"
+          placeholder="55 1234 5678"
+          [value]="v('phone')"
+          (valueChange)="set('phone', $event)"
+          [error]="errors()['phone']"
+        />
+      }
+      <app-field
+        label="Contraseña"
+        type="password"
+        [required]="true"
+        placeholder="Tu contraseña"
+        [value]="v('password')"
+        (valueChange)="set('password', $event)"
+        [error]="errors()['password']"
+      />
+      @if (!isLogin()) {
+        <ul class="pw-rules" aria-label="Reglas de la contraseña">
+          @for (r of rules; track r.label) {
+            <li [class]="r.test(v('password')) ? 'ok' : ''">{{ r.label }}</li>
+          }
+        </ul>
+        <app-field
+          label="Confirmar contraseña"
+          type="password"
+          [required]="true"
+          placeholder="Repite tu contraseña"
+          [value]="v('confirm')"
+          (valueChange)="set('confirm', $event)"
+          [error]="errors()['confirm']"
+        />
+      }
+      @if (isLogin()) {
+        <div class="form-options">
+          <label><input type="checkbox" /> Recordar sesión</label>
+          <button type="button" (click)="ui.navigate('/recuperar')">¿Olvidaste tu contraseña?</button>
+        </div>
+      }
+      @if (formError()) {
+        <div class="inline-error">{{ formError() }}</div>
+      }
+      <button appBtn type="submit" class="full">{{ isLogin() ? "Ingresar" : "Crear mi cuenta" }}</button>
+    </form>
+    <p class="auth-switch">
+      {{ isLogin() ? "¿Aún no tienes cuenta?" : "¿Ya tienes una cuenta?" }}
+      <button type="button" (click)="ui.navigate(isLogin() ? '/registro' : '/login')">
+        {{ isLogin() ? "Regístrate aquí" : "Inicia sesión" }}
+      </button>
+    </p>
+  </div>
+  <div class="auth-aside">
+    <div>
+      <span class="auth-quote">“</span>
+      <h2>Cada libro es una conversación. Ven a ser parte de ella.</h2>
+      <p>Lee, comparte y conecta.</p>
+    </div>
+  </div>
+</div>

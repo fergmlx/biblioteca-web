@@ -1,0 +1,31 @@
+<app-table-toolbar
+  title="Gestión de préstamos"
+  description="Registra préstamos, devoluciones y consulta vencimientos."
+  action="Registrar préstamo"
+  (act)="ui.navigate('/admin/prestamos/nuevo')"
+/>
+<div class="mini-stats" style="grid-template-columns: repeat(3, 1fr)">
+  <app-mini-stat label="Activos" [value]="activeCount()" />
+  <app-mini-stat label="Atrasados" [value]="late()" [danger]="true" />
+  <app-mini-stat label="Devueltos" [value]="returnedCount()" />
+</div>
+<section class="card table-card">
+  <div class="table-toolbar">
+    <app-admin-search [(value)]="search" placeholder="Buscar usuario o libro..." />
+    <div class="toolbar-filters">
+      <app-select [options]="states" [(value)]="status" />
+      <button
+        appBtn
+        variant="secondary"
+        (click)="status.set(status() === 'Atrasado' ? 'Todos los estados' : 'Atrasado')"
+      >
+        {{ status() === "Atrasado" ? "Ver todos" : "Ver atrasados (" + late() + ")" }}
+      </button>
+    </div>
+  </div>
+  @if (rows().length) {
+    <app-loan-table [rows]="rows()" (returned)="giveBack($event)" />
+  } @else {
+    <app-empty-state title="Sin préstamos" text="Ningún préstamo coincide con los filtros." />
+  }
+</section>

@@ -1,0 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap");
+@import "tailwindcss";
+
+/* Orden importante: la cascada se conserva respecto al CSS original. */
+@import "./styles/base.css"; /* variables, layout y páginas públicas */
+@import "./styles/admin.css"; /* área administrativa */
+@import "./styles/components.css"; /* modal, estrellas, estados, páginas de usuario */
+@import "./styles/admin-extras.css"; /* extras del área administrativa */

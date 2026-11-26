@@ -1,0 +1,12 @@
+<footer class="footer">
+  <button type="button" class="brand footer-brand" (click)="ui.navigate('/')">
+    <span class="brand-icon"><app-icon name="book" /></span>
+    Biblioteca<span class="brand-dot">.</span>
+  </button>
+  <p>Un espacio para descubrir, leer y compartir.</p>
+  <div>
+    <button type="button" (click)="ui.navigate('/catalogo')">Catálogo</button>
+    <button type="button" (click)="ui.navigate('/circulos')">Círculos</button>
+    <button type="button" (click)="ui.navigate(auth.role() === 'guest' ? '/login' : '/perfil')">Mi cuenta</button>
+  </div>
+</footer>

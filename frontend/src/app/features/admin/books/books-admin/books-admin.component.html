@@ -1,0 +1,49 @@
+<app-table-toolbar
+  title="Gestión de libros"
+  description="Administra el catálogo y la disponibilidad de los títulos."
+  action="Crear libro"
+  (act)="ui.navigate('/admin/libros/nuevo')"
+/>
+<app-data-card
+  [headers]="['Libro', 'Autor', 'Género', 'ISBN', 'Ejemplares', 'Estado', 'Acciones']"
+  [isEmpty]="data().length === 0"
+>
+  <ng-container toolbar>
+    <app-admin-search [(value)]="search" placeholder="Buscar por título, autor o ISBN..." />
+    <app-select [options]="states" [(value)]="state" />
+  </ng-container>
+  <app-empty-state empty title="Sin resultados" text="Ningún libro coincide con los filtros." />
+  <span footer>Mostrando {{ data().length }} de {{ catalog.books().length }} libros</span>
+  @for (book of data(); track book.id) {
+    <tr>
+      <td>
+        <div class="table-book">
+          <app-book-cover [title]="book.title" [color]="book.color" size="small" /><strong>{{ book.title }}</strong>
+        </div>
+      </td>
+      <td>{{ book.author || "—" }}</td>
+      <td>{{ book.genre || "—" }}</td>
+      <td>{{ book.isbn }}</td>
+      <td>
+        <span [class]="'free-pill' + (book.copiesFree === 0 ? ' none' : '')">{{ book.copiesFree }}</span> /
+        {{ book.copiesTotal }}
+      </td>
+      <td><app-status [text]="book.active ? 'Activo' : 'Inactivo'" /></td>
+      <td>
+        <app-actions
+          view
+          edit
+          toggle
+          [active]="book.active"
+          (viewed)="ui.navigate('/libros/' + book.id)"
+          (edited)="ui.navigate('/admin/libros/' + book.id + '/editar')"
+          (toggled)="toggle(book.id, book.active, book.title)"
+        >
+          <button type="button" title="Ejemplares" (click)="ui.navigate('/admin/ejemplares?libro=' + book.id)">
+            <app-icon name="copy" [size]="17" />
+          </button>
+        </app-actions>
+      </td>
+    </tr>
+  }
+</app-data-card>

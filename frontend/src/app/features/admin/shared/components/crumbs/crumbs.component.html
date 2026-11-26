@@ -1,0 +1,12 @@
+<nav class="crumbs" aria-label="Ruta">
+  @for (item of items(); track $index) {
+    @if ($index > 0) {
+      <span>/</span>
+    }
+    @if (item.to) {
+      <button type="button" (click)="ui.navigate(item.to)">{{ item.label }}</button>
+    } @else {
+      <span class="current">{{ item.label }}</span>
+    }
+  }
+</nav>

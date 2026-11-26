@@ -1,0 +1,145 @@
+@if (account(); as account) {
+  <app-crumbs [items]="[{ label: 'Usuarios', to: '/admin/usuarios' }, { label: account.name + ' ' + account.last }]" />
+  <section class="card user-hero">
+    <div class="avatar">{{ initials(account.name, account.last) }}</div>
+    <div class="info">
+      <h2>{{ account.name }} {{ account.last }}</h2>
+      <div class="row-buttons">
+        <app-status [text]="account.role" /><app-status [text]="account.active ? 'Activo' : 'Inactivo'" />
+      </div>
+      <div class="meta">
+        <span>N.º de socio {{ account.member }}</span
+        ><span>{{ account.email }}</span> <span>{{ account.phone || "Sin teléfono" }}</span><span
+          >Miembro desde {{ fmt(account.joined) }}</span
+        >
+      </div>
+    </div>
+    <div class="actions">
+      <button appBtn variant="secondary" (click)="ui.navigate('/admin/usuarios')">Volver</button>
+      <button appBtn variant="secondary" icon="edit" (click)="ui.navigate('/admin/usuarios/' + account.id + '/editar')">
+        Editar
+      </button>
+      <button
+        appBtn
+        class="admin-button"
+        icon="loan"
+        [disabled]="!account.active || account.role !== 'Usuario'"
+        (click)="ui.navigate('/admin/prestamos/nuevo?usuario=' + account.id)"
+      >
+        Registrar préstamo
+      </button>
+    </div>
+  </section>
+  <div class="mini-stats">
+    <app-mini-stat label="Préstamos activos" [value]="activeCount()" />
+    <app-mini-stat label="Atrasados" [value]="lateCount()" [danger]="true" />
+    <app-mini-stat label="Círculos" [value]="circlesCount()" />
+    <app-mini-stat label="Reseñas" [value]="reviews().length" />
+  </div>
+  <app-admin-tabs [(value)]="tab" [tabs]="tabs()" />
+  <section class="card table-card">
+    @switch (tab()) {
+      @case ("loans") {
+        @if (loans().length) {
+          <app-loan-table [rows]="loans()" (returned)="giveBack($event)" />
+        } @else {
+          <app-empty-state title="Sin préstamos" text="Este usuario aún no tiene préstamos." />
+        }
+      }
+      @case ("requests") {
+        @if (requests().length) {
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Libro</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Respuesta</th>
+                  <th>Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of requests(); track r.id) {
+                  <tr>
+                    <td>
+                      <strong>{{ bookTitle(r.bookId) }}</strong>
+                    </td>
+                    <td>{{ fmt(r.date) }}</td>
+                    <td><app-status [text]="r.status" /></td>
+                    <td>{{ fmt(r.answered) }}</td>
+                    <td>{{ r.notes || "—" }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <app-empty-state title="Sin solicitudes" text="No ha solicitado libros." />
+        }
+      }
+      @case ("circles") {
+        @if (enrollments().length) {
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Círculo</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (e of enrollments(); track e.id) {
+                  <tr>
+                    <td>
+                      <button type="button" class="link-btn" (click)="ui.navigate('/admin/circulos/' + e.circleId)">
+                        {{ circleName(e.circleId) }}
+                      </button>
+                    </td>
+                    <td>{{ fmt(e.date) }}</td>
+                    <td><app-status [text]="e.status" /></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <app-empty-state title="Sin inscripciones" text="No participa en círculos de lectura." />
+        }
+      }
+      @case ("reviews") {
+        @if (reviews().length) {
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Libro</th>
+                  <th>Calificación</th>
+                  <th>Comentario</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of reviews(); track r.id) {
+                  <tr>
+                    <td>
+                      <strong>{{ bookTitle(r.bookId) }}</strong>
+                    </td>
+                    <td><app-stars [value]="r.rating" [size]="15" /></td>
+                    <td class="review-quote">{{ r.comment }}</td>
+                    <td>{{ fmt(r.date) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <app-empty-state title="Sin reseñas" text="No ha publicado reseñas." />
+        }
+      }
+    }
+  </section>
+} @else {
+  <app-admin-not-found what="Usuario" back="Volver a usuarios" to="/admin/usuarios" />
+}

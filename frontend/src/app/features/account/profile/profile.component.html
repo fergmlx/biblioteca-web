@@ -1,0 +1,92 @@
+@if (auth.user(); as mine) {
+  <div class="page-shell">
+    <app-page-header
+      eyebrow="Mi cuenta"
+      title="Perfil del usuario"
+      description="Administra tus datos y accesos personales."
+    />
+    <div class="profile-grid">
+      <section class="card profile-card">
+        <div class="profile-avatar">{{ initials(mine.name, mine.last) }}</div>
+        <h2>{{ mine.name }} {{ mine.last }}</h2>
+        <p>{{ mine.email }}</p>
+        <app-status [text]="mine.role === 'Administrador' ? 'Administrador' : 'Cuenta activa'" />
+        <div class="profile-stats">
+          <div>
+            <strong>{{ loansActive() }}</strong
+            ><span>Préstamos</span>
+          </div>
+          <div>
+            <strong>{{ catalog.favorites().length }}</strong
+            ><span>Favoritos</span>
+          </div>
+          <div>
+            <strong>{{ circlesActive() }}</strong
+            ><span>Círculos</span>
+          </div>
+        </div>
+      </section>
+      <section class="card profile-data">
+        <div class="card-title">
+          <div>
+            <span class="eyebrow">Información personal</span>
+            <h2>Mis datos</h2>
+          </div>
+          <button appBtn variant="secondary" icon="edit" (click)="toggleEdit()">
+            {{ editing() ? "Cancelar" : "Editar" }}
+          </button>
+        </div>
+        <div class="form-grid">
+          <app-field label="Nombre(s)" [(value)]="name" [disabled]="!editing()" />
+          <app-field label="Apellidos" [(value)]="last" [disabled]="!editing()" />
+          <app-field label="Correo electrónico" [value]="mine.email" [disabled]="true" />
+          <app-field label="Teléfono" [(value)]="phone" [disabled]="!editing()" />
+          <app-field label="Matrícula / N.º de socio" [value]="mine.member" [disabled]="true" />
+          <app-field label="Miembro desde" [value]="fmt(mine.joined)" [disabled]="true" />
+        </div>
+        @if (editing()) {
+          <button appBtn (click)="save()">Guardar cambios</button>
+        }
+      </section>
+      <section class="card profile-links">
+        <h2>Accesos rápidos</h2>
+        @for (l of links; track l[1]) {
+          <button type="button" (click)="ui.navigate(l[2])">
+            <app-icon [name]="l[0]" /><span>{{ l[1] }}</span
+            ><app-icon name="arrow" [size]="17" />
+          </button>
+        }
+        <button type="button" class="logout-row" (click)="logout()">
+          <app-icon name="logout" /><span>Cerrar sesión</span>
+        </button>
+      </section>
+      <section class="card profile-reviews">
+        <div class="card-title">
+          <div>
+            <span class="eyebrow">Tu opinión</span>
+            <h2>Mis reseñas</h2>
+          </div>
+        </div>
+        @if (myReviews().length) {
+          <div class="review-cards">
+            @for (r of myReviews(); track r.review.id) {
+              <article class="review-card">
+                <app-book-cover [title]="r.book.title" [color]="r.book.color" size="small" />
+                <div>
+                  <strong>{{ r.book.title }}</strong>
+                  <app-stars [value]="r.review.rating" [size]="14" />
+                  <p>{{ r.review.comment || "Sin comentario" }}</p>
+                  <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + r.book.id)">
+                    Ver libro
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="muted">Aún no has reseñado ningún libro. Hazlo desde su página de detalle.</p>
+        }
+      </section>
+    </div>
+  </div>
+}

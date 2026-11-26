@@ -1,0 +1,48 @@
+<div class="page-shell">
+  <app-page-header
+    eyebrow="Lectura en comunidad"
+    title="Círculos de lectura"
+    description="Comparte perspectivas, conoce lectores y descubre historias en compañía."
+  >
+    @if (auth.user()) {
+      <button appBtn variant="secondary" icon="users" (click)="ui.navigate('/mis-circulos')">Mis círculos</button>
+    }
+  </app-page-header>
+  <div class="circle-grid">
+    @for (circle of circles(); track circle.id; let index = $index) {
+      @let enrollment = enrollmentOf(circle.id);
+      @let book = bookOf(circle.bookId);
+      <section class="card circle-card">
+        <div [class]="'circle-visual circle-' + ((index % 3) + 1)">
+          <app-icon name="users" [size]="46" />
+          <span>{{ circle.topic }}</span>
+        </div>
+        <div class="circle-body">
+          <span class="eyebrow">{{ enrollment ? "Tu círculo" : "Próxima sesión" }}</span>
+          <h2>{{ circle.name }}</h2>
+          <p>{{ circle.description }}</p>
+          @if (book) {
+            <small class="circle-book"><app-icon name="book" [size]="14" /> Leyendo: {{ book.title }}</small>
+          }
+          <div class="circle-facts">
+            <span><app-icon name="calendar" [size]="17" />{{ circle.day }}</span>
+            <span><app-icon name="clock" [size]="17" />{{ circle.time }}</span>
+            <span><app-icon name="users" [size]="17" />{{ circle.enrolled }} de {{ circle.capacity }} lugares</span>
+          </div>
+          <div class="capacity"><span [style.width.%]="pct(circle.enrolled, circle.capacity)"></span></div>
+          <div class="circle-cta">
+            @if (enrollment) {
+              <app-status [text]="enrollment.status === 'Activa' ? 'Confirmada' : 'Pendiente'" />
+            }
+            <button appBtn (click)="ui.navigate('/circulos/' + circle.id)">
+              Ver detalles <app-icon name="arrow" [size]="16" />
+            </button>
+          </div>
+        </div>
+      </section>
+    }
+  </div>
+  @if (!circles().length) {
+    <app-empty-state title="No hay círculos activos" text="Vuelve pronto: se anunciarán nuevas sesiones." />
+  }
+</div>

@@ -1,0 +1,10 @@
+<app-page-header eyebrow="Administración" [title]="title()" [description]="description()">
+  @if (action() || hasExtra) {
+    <div class="row-buttons">
+      <ng-content />
+      @if (action()) {
+        <button appBtn class="admin-button" [icon]="icon()" (click)="act.emit()">{{ action() }}</button>
+      }
+    </div>
+  }
+</app-page-header>

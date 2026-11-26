@@ -1,0 +1,72 @@
+<app-page-header
+  eyebrow="Resumen general"
+  [title]="greeting() + ', ' + (auth.user()?.name || 'administrador')"
+  description="Aquí tienes un resumen en tiempo real de la actividad de la biblioteca."
+>
+  <button appBtn class="admin-button" icon="plus" (click)="ui.navigate('/admin/libros/nuevo')">Crear libro</button>
+</app-page-header>
+<div class="stats-grid">
+  @for (s of stats(); track s[1]) {
+    <section class="card stat-card">
+      <span class="stat-icon"><app-icon [name]="s[0]" /></span>
+      <div>
+        <small>{{ s[1] }}</small
+        ><strong>{{ s[2] }}</strong
+        ><span>{{ s[3] }}</span>
+      </div>
+    </section>
+  }
+</div>
+<div class="dashboard-grid">
+  <section class="card activity-card">
+    <div class="card-title">
+      <div>
+        <span class="eyebrow admin-text">Actividad</span>
+        <h2>Préstamos de los últimos 7 días</h2>
+      </div>
+    </div>
+    <div class="bar-chart chart-days">
+      @for (d of week(); track d.day) {
+        <div [title]="fmt(d.day) + ': ' + d.count + ' préstamo(s)'">
+          <small class="val">{{ d.count }}</small>
+          <span [style.height.%]="Math.max(4, (d.count / max()) * 80)"></span>
+          <small>{{ d.label }}</small>
+        </div>
+      }
+    </div>
+  </section>
+  <section class="card">
+    <div class="card-title">
+      <div>
+        <span class="eyebrow admin-text">Atención</span>
+        <h2>Acciones pendientes</h2>
+      </div>
+    </div>
+    <div class="pending-list">
+      @for (p of pending(); track p.path) {
+        <button type="button" (click)="ui.navigate(p.path)">
+          <span [class]="'pending-icon ' + p.tone"><app-icon [name]="p.icon" /></span>
+          <span
+            ><strong>{{ p.title }}</strong
+            ><small>{{ p.sub }}</small></span
+          >
+          <app-icon name="arrow" [size]="17" />
+        </button>
+      }
+    </div>
+  </section>
+</div>
+<section class="card">
+  <div class="card-title">
+    <div>
+      <span class="eyebrow admin-text">Registro reciente</span>
+      <h2>Últimos préstamos</h2>
+    </div>
+    <button appBtn variant="ghost" (click)="ui.navigate('/admin/prestamos')">Ver todos</button>
+  </div>
+  @if (recent().length) {
+    <app-loan-table [rows]="recent()" [compact]="true" />
+  } @else {
+    <app-empty-state title="Sin préstamos" text="Aún no se registran préstamos." />
+  }
+</section>

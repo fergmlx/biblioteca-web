@@ -1,0 +1,38 @@
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        @for (h of headers(); track $index) {
+          <th>{{ h }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (loan of rows(); track loan.id) {
+        <tr>
+          <td><app-user-link [id]="loan.userId" /></td>
+          <td>{{ bookTitle(loan.bookId) }}</td>
+          <td>
+            <span class="code">{{ copyCode(loan) }}</span>
+          </td>
+          <td>{{ fmt(loan.date) }}</td>
+          <td>{{ fmt(loan.due) }}</td>
+          @if (!compact()) {
+            <td>{{ fmt(loan.returned) }}</td>
+          }
+          <td><app-status [text]="loan.status" /></td>
+          @if (!compact()) {
+            <td>
+              <div class="row-buttons">
+                @if (!loan.returned) {
+                  <button appBtn class="small admin-button" (click)="returned.emit(loan)">Registrar devolución</button>
+                }
+                <app-actions view (viewed)="ui.navigate('/admin/usuarios/' + loan.userId)" />
+              </div>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

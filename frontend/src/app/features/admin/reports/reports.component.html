@@ -1,0 +1,166 @@
+<app-table-toolbar title="Reportes" description="Indicadores y exportaciones de la actividad de la biblioteca." />
+<div class="mini-stats">
+  @for (k of kpis(); track k[0]) {
+    <app-mini-stat [label]="k[0]" [value]="k[1]" />
+  }
+</div>
+<div class="report-grid">
+  <section class="card report-card">
+    <div class="card-title"><h2>Más solicitados</h2></div>
+    <ol class="rank-list">
+      @for (b of topLoans(); track b.id; let i = $index) {
+        <li>
+          <span class="pos">{{ i + 1 }}</span>
+          <div>
+            <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + b.id)">{{ b.title }}</button>
+            <div class="rank-bar"><span [style.width.%]="(b.loans / maxLoans()) * 100"></span></div>
+          </div>
+          <strong>{{ b.loans }}</strong>
+        </li>
+      }
+    </ol>
+  </section>
+  <section class="card report-card">
+    <div class="card-title"><h2>Mejor valorados</h2></div>
+    @if (topRated().length) {
+      <ol class="rank-list">
+        @for (b of topRated(); track b.id; let i = $index) {
+          <li>
+            <span class="pos">{{ i + 1 }}</span>
+            <div>
+              <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + b.id)">{{ b.title }}</button>
+              <span class="cell-sub">{{ b.reviewCount }} reseña(s)</span>
+            </div>
+            <app-stars [value]="b.rating" [size]="14" />
+          </li>
+        }
+      </ol>
+    } @else {
+      <app-empty-state title="Sin reseñas" text="Aún no hay calificaciones." />
+    }
+  </section>
+</div>
+
+<section class="card report-card">
+  <div class="card-title">
+    <div>
+      <span class="eyebrow admin-text">Reporte</span>
+      <h2>Préstamos</h2>
+    </div>
+    <button appBtn variant="secondary" icon="download" (click)="exportLoans()">Exportar CSV</button>
+  </div>
+  @if (loanRows().length) {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Libro</th>
+            <th>Préstamo</th>
+            <th>Límite</th>
+            <th>Devolución</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (l of loanRows(); track l.id) {
+            <tr>
+              <td>{{ auth.userName(l.userId) }}</td>
+              <td>{{ bookTitle(l.bookId) }}</td>
+              <td>{{ fmt(l.date) }}</td>
+              <td>{{ fmt(l.due) }}</td>
+              <td>{{ fmt(l.returned) }}</td>
+              <td><app-status [text]="l.status" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <app-empty-state title="Sin datos" text="No hay préstamos registrados." />
+  }
+</section>
+
+<section class="card report-card">
+  <div class="card-title">
+    <div>
+      <span class="eyebrow admin-text">Reporte</span>
+      <h2>Inscripciones por círculo</h2>
+    </div>
+    <button appBtn variant="secondary" icon="download" (click)="exportCircles()">Exportar CSV</button>
+  </div>
+  @if (circleRows().length) {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Círculo</th>
+            <th>Capacidad</th>
+            <th>Inscritos</th>
+            <th>Confirmadas</th>
+            <th>Pendientes</th>
+            <th>Canceladas</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of circleRows(); track c.name) {
+            <tr>
+              <td>
+                <strong>{{ c.name }}</strong>
+              </td>
+              <td>{{ c.capacity }}</td>
+              <td>{{ c.enrolled }}</td>
+              <td>{{ c.active }}</td>
+              <td>{{ c.pending }}</td>
+              <td>{{ c.cancelled }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <app-empty-state title="Sin círculos" text="No hay círculos registrados." />
+  }
+</section>
+
+<section class="card report-card">
+  <div class="card-title">
+    <div>
+      <span class="eyebrow admin-text">Reporte</span>
+      <h2>Libros más solicitados y valoración</h2>
+    </div>
+    <button appBtn variant="secondary" icon="download" (click)="exportBooks()">Exportar CSV</button>
+  </div>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Libro</th>
+          <th>Préstamos</th>
+          <th>Solicitudes</th>
+          <th>Calificación</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of ranking(); track b.id; let i = $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>
+              <strong>{{ b.title }}</strong>
+            </td>
+            <td>{{ b.loans }}</td>
+            <td>{{ b.requests }}</td>
+            <td>
+              @if (b.reviewCount) {
+                <app-stars [value]="b.rating" [size]="14" />
+              } @else {
+                <span class="muted-cell">Sin reseñas</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

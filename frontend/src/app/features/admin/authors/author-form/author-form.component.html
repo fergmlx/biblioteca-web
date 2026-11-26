@@ -1,0 +1,72 @@
+@if (missing()) {
+  <app-admin-not-found what="Autor" back="Volver a autores" to="/admin/autores" />
+} @else {
+  <app-crumbs
+    [items]="[{ label: 'Autores', to: '/admin/autores' }, { label: author() ? 'Editar autor' : 'Nuevo autor' }]"
+  />
+  <app-page-header
+    eyebrow="Gestión de autores"
+    [title]="author() ? 'Editar: ' + catalog.authorName(author()!) : 'Nuevo autor'"
+    description="Datos biográficos del autor."
+  />
+  <form (submit)="submit($event)">
+    <div class="admin-form-grid">
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>01</span>
+          <div>
+            <h2>Información personal</h2>
+            <p>Identificación y biografía.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <app-field label="Nombres" [required]="true" [value]="f().name" (valueChange)="set('name', $event)" />
+          <app-field
+            label="Apellido paterno"
+            [required]="true"
+            [value]="f().last"
+            (valueChange)="set('last', $event)"
+          />
+          <app-field label="Apellido materno" [value]="f().maternal" (valueChange)="set('maternal', $event)" />
+          <app-select label="País" [options]="countries" [value]="f().country" (valueChange)="set('country', $event)" />
+          <app-field label="Fecha de nacimiento" type="date" [value]="f().birth" (valueChange)="set('birth', $event)" />
+          <app-field
+            label="Fecha de fallecimiento"
+            type="date"
+            [value]="f().death"
+            (valueChange)="set('death', $event)"
+          />
+          <div class="span-2">
+            <app-textarea
+              label="Biografía"
+              [value]="f().bio"
+              (valueChange)="set('bio', $event)"
+              placeholder="Breve reseña del autor..."
+            />
+          </div>
+        </div>
+      </section>
+      <section class="card form-section">
+        <div class="form-section-title">
+          <span>02</span>
+          <div>
+            <h2>Imagen</h2>
+            <p>Fotografía del autor.</p>
+          </div>
+        </div>
+        <label class="upload-box">
+          @if (image()) {
+            <img [src]="image()" alt="Vista previa" style="max-height: 140px; border-radius: 8px" />
+          } @else {
+            <app-icon name="plus" [size]="25" /><strong>Subir imagen</strong><small>PNG o JPG, máximo 5 MB</small>
+          }
+          <input type="file" accept="image/*" (change)="pickFile($event)" />
+        </label>
+      </section>
+    </div>
+    <div class="form-footer">
+      <button appBtn variant="secondary" (click)="ui.navigate('/admin/autores')">Cancelar</button>
+      <button appBtn type="submit" class="admin-button">{{ author() ? "Guardar cambios" : "Crear autor" }}</button>
+    </div>
+  </form>
+}

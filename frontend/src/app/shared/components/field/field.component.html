@@ -1,0 +1,27 @@
+<label class="field">
+  <span>{{ label() }}{{ required() ? " *" : "" }}</span>
+  <span class="field-input">
+    <input
+      [type]="type() === 'password' && shown() ? 'text' : type()"
+      [placeholder]="placeholder()"
+      [value]="value()"
+      (input)="value.set($any($event.target).value)"
+      [attr.aria-invalid]="!!error()"
+      [disabled]="disabled()"
+    />
+    @if (type() === "password") {
+      <button
+        type="button"
+        class="pw-toggle"
+        [attr.aria-label]="shown() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+        [attr.aria-pressed]="shown()"
+        (click)="shown.set(!shown())"
+      >
+        {{ shown() ? "Ocultar" : "Mostrar" }}
+      </button>
+    }
+  </span>
+  @if (error()) {
+    <small class="field-error">{{ error() }}</small>
+  }
+</label>
