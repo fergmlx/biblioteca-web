@@ -1,0 +1,10 @@
+services:
+  migrate:
+    image: flyway/flyway:11.7.2
+    environment:
+      FLYWAY_URL: ${FLYWAY_URL:?Se requiere la URL JDBC externa}
+      FLYWAY_USER: ${FLYWAY_USER:?Se requiere el usuario de migraciones}
+      FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Se requiere su contraseña}
+    volumes:
+      - ../db/migrations:/flyway/sql:ro
+    command: migrate

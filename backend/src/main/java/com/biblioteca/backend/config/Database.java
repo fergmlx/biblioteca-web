@@ -25,16 +25,17 @@ public final class Database {
                 String host = setting("DB_HOST", file.getProperty("DB_HOST", "localhost"));
                 String port = setting("DB_PORT", file.getProperty("DB_PORT", "5432"));
                 String name = setting("DB_NAME", file.getProperty("DB_NAME", "biblioteca"));
-                url = "jdbc:postgresql://" + host + ":" + port + "/" + name;
+                String sslMode = setting("DB_SSLMODE", file.getProperty("DB_SSLMODE", "prefer"));
+                url = "jdbc:postgresql://" + host + ":" + port + "/" + name + "?sslmode=" + sslMode;
             }
             
             config.setJdbcUrl(url);
             config.setUsername(setting("DB_USER", file.getProperty("DB_USER", "biblioteca_app")));
-            config.setPassword(setting("DB_PASSWORD", file.getProperty("DB_PASSWORD", "123")));
+            config.setPassword(setting("DB_PASSWORD", file.getProperty("DB_PASSWORD")));
             config.setDriverClassName("org.postgresql.Driver");
             
-            int maxPool = safeParseInt(setting("DB_POOL_MAX", file.getProperty("DB_POOL_MAX")), 10);
-            int minIdle = safeParseInt(setting("DB_POOL_MIN", file.getProperty("DB_POOL_MIN")), 2);
+            int maxPool = safeParseInt(setting("DB_POOL_MAX", file.getProperty("DB_POOL_MAX")), 5);
+            int minIdle = safeParseInt(setting("DB_POOL_MIN", file.getProperty("DB_POOL_MIN")), 1);
             
             config.setMaximumPoolSize(maxPool);
             config.setMinimumIdle(minIdle);

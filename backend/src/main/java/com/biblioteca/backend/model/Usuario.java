@@ -18,7 +18,7 @@ public class Usuario {
     private Boolean membresiaActiva;
     private OffsetDateTime fechaRegistro;
     private Short idRol;
-    @JsonProperty("contrasena")
+    @JsonProperty(value = "contrasena", access = JsonProperty.Access.WRITE_ONLY)
     private String plainPassword;
 
     public Usuario() {}

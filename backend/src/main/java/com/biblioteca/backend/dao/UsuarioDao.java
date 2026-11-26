@@ -3,54 +3,113 @@ package com.biblioteca.backend.dao;
 import com.biblioteca.backend.config.Database;
 import com.biblioteca.backend.model.Usuario;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.mindrot.jbcrypt.BCrypt;
 import java.sql.*;
+import java.util.*;
+import java.time.OffsetDateTime;
+import com.biblioteca.backend.security.PasswordHash;
 
-public class UsuarioDao extends JdbcDao<Usuario> {
-    public UsuarioDao() { super(Usuario.class, "usuario", new String[]{"id_usuario"}); }
+public final class UsuarioDao {
+    private static final String WHERE_KEY = " WHERE id_usuario = ?";
 
-    @Override
-    public Object insert(JsonNode node) throws SQLException {
-        JsonNode password = node.get("contrasena");
-        if (password == null || password.isNull() || password.asText().isBlank())
-            throw new SQLException("contrasena is required for user insert");
-        String hash = BCrypt.hashpw(password.asText(), BCrypt.gensalt(12));
-        String sql = "INSERT INTO public.usuario (numero_socio,nombres,apellido_paterno,apellido_materno,correo,contrasena_hash,telefono,membresia_activa,id_rol) "
-            + "VALUES (?,?,?,?,?,?,?,?,?) RETURNING *";
+    public List<Usuario> findAll() throws SQLException {
+        List<Usuario> rows = new ArrayList<>();
         try (Connection c = Database.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setObject(1, node.has("numero_socio") && !node.get("numero_socio").isNull() ? node.get("numero_socio").asText() : null);
-            ps.setObject(2, node.get("nombres").asText());
-            ps.setObject(3, node.get("apellido_paterno").asText());
-            ps.setObject(4, node.has("apellido_materno") && !node.get("apellido_materno").isNull() ? node.get("apellido_materno").asText() : null);
-            ps.setObject(5, node.get("correo").asText());
-            ps.setObject(6, hash);
-            ps.setObject(7, node.has("telefono") && !node.get("telefono").isNull() ? node.get("telefono").asText() : null);
-            ps.setObject(8, node.has("membresia_activa") ? node.get("membresia_activa").asBoolean() : true);
-            ps.setObject(9, (short)node.get("id_rol").asInt());
-            try (ResultSet rs = ps.executeQuery()) { if (rs.next()) return map(rs); }
+             PreparedStatement ps = c.prepareStatement("SELECT * FROM public.usuario");
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) rows.add(map(rs));
         }
-        throw new SQLException("Insert returned no row");
+        return rows;
     }
 
-    @Override
-    public boolean patch(JsonNode node, String... values) throws SQLException {
-        if (node.has("contrasena") && !node.get("contrasena").isNull()) {
-            JsonNode copy = node.deepCopy();
-            ((com.fasterxml.jackson.databind.node.ObjectNode)copy).put("contrasena_hash", BCrypt.hashpw(node.get("contrasena").asText(), BCrypt.gensalt(12)));
-            com.fasterxml.jackson.databind.node.ObjectNode mutable = (com.fasterxml.jackson.databind.node.ObjectNode)copy;
-            mutable.remove("contrasena");
-            JsonNode hashOnly = mutable;
-            boolean first = super.patch(hashOnly, values);
-            if (hashOnly.has("contrasena_hash")) {
-                try (Connection c = Database.getConnection();
-                     PreparedStatement ps = c.prepareStatement("UPDATE public.usuario SET contrasena_hash = ? WHERE id_usuario = ?")) {
-                    ps.setString(1, hashOnly.get("contrasena_hash").asText()); ps.setObject(2, java.util.UUID.fromString(values[0]));
-                    if (ps.executeUpdate() == 1) return true;
-                }
+    public Optional<Usuario> findById(String... keys) throws SQLException {
+        if (keys.length != 1) return Optional.empty();
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement("SELECT * FROM public.usuario" + WHERE_KEY)) {
+            bindKey(ps, 1, keys);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
             }
-            return first;
         }
-        return super.patch(node, values);
+    }
+
+    public Usuario insert(JsonNode body) throws SQLException {
+        SqlFields fields = fields(body, true);
+        if (fields.isEmpty()) throw new IllegalArgumentException("Se requieren campos para crear el registro.");
+        String sql = "INSERT INTO public.usuario (" + fields.columns()
+            + ") VALUES (" + fields.placeholders() + ") RETURNING *";
+        try (Connection c = Database.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+            fields.bind(ps);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return map(rs);
+                throw new SQLException("La inserción no devolvió un registro.");
+            }
+        }
+    }
+
+    public boolean patch(JsonNode body, String... keys) throws SQLException {
+        if (keys.length != 1) return false;
+        SqlFields fields = fields(body, false);
+        if (fields.isEmpty()) return false;
+        String sql = "UPDATE public.usuario SET " + fields.assignments() + WHERE_KEY;
+        try (Connection c = Database.getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+            bindKey(ps, fields.bind(ps), keys);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+    public boolean update(JsonNode body, String... keys) throws SQLException {
+        return patch(body, keys);
+    }
+
+    public boolean delete(String... keys) throws SQLException {
+        if (keys.length != 1) return false;
+        try (Connection c = Database.getConnection();
+             PreparedStatement ps = c.prepareStatement("DELETE FROM public.usuario" + WHERE_KEY)) {
+            bindKey(ps, 1, keys);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+    private static void bindKey(PreparedStatement ps, int start, String[] keys) throws SQLException {
+        ps.setObject(start, UUID.fromString(keys[0]));
+    }
+
+    private static SqlFields fields(JsonNode body, boolean inserting) {
+        SqlFields fields = new SqlFields(body);
+        if (inserting && (body.hasNonNull("id_usuario") || body.hasNonNull("idUsuario"))) {
+            fields.add("id_usuario", "idUsuario", UUID.class);
+        }
+        fields.add("numero_socio", "numeroSocio", String.class);
+        fields.add("nombres", "nombres", String.class);
+        fields.add("apellido_paterno", "apellidoPaterno", String.class);
+        fields.add("apellido_materno", "apellidoMaterno", String.class);
+        fields.add("correo", "correo", String.class);
+        fields.add("telefono", "telefono", String.class);
+        fields.add("membresia_activa", "membresiaActiva", Boolean.class);
+        fields.add("fecha_registro", "fechaRegistro", OffsetDateTime.class);
+        fields.add("id_rol", "idRol", Short.class);
+        if (inserting || body.has("contrasena")) {
+            JsonNode password = body.get("contrasena");
+            if (password == null || !password.isTextual()) {
+                throw new IllegalArgumentException("Se requiere una contraseña.");
+            }
+            fields.put("contrasena_hash", PasswordHash.create(password.textValue()));
+        }
+        return fields;
+    }
+
+    private static Usuario map(ResultSet rs) throws SQLException {
+        Usuario row = new Usuario();
+        row.setIdUsuario(rs.getObject("id_usuario", UUID.class));
+        row.setNumeroSocio(rs.getString("numero_socio"));
+        row.setNombres(rs.getString("nombres"));
+        row.setApellidoPaterno(rs.getString("apellido_paterno"));
+        row.setApellidoMaterno(rs.getString("apellido_materno"));
+        row.setCorreo(rs.getString("correo"));
+        row.setTelefono(rs.getString("telefono"));
+        row.setMembresiaActiva(rs.getObject("membresia_activa", Boolean.class));
+        row.setFechaRegistro(rs.getObject("fecha_registro", OffsetDateTime.class));
+        row.setIdRol(rs.getObject("id_rol", Short.class));
+        return row;
     }
 }

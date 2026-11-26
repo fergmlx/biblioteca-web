@@ -4,7 +4,20 @@
     "description": "Pruebas GET, POST, PUT, PATCH y DELETE para los 19 recursos. Seleccione Biblioteca Local y configure los valores UUID.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {"key": "key", "value": "X-Demo-Key", "type": "string"},
+      {"key": "value", "value": "{{demo_api_key}}", "type": "string"},
+      {"key": "in", "value": "header", "type": "string"}
+    ]
+  },
   "variable": [
+    {
+      "key": "demo_api_key",
+      "value": "",
+      "type": "string"
+    },
     {
       "key": "base_url",
       "value": "http://localhost:8080/biblioteca-backend",

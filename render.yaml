@@ -1,0 +1,23 @@
+# Crea primero la base biblioteca-pg y aplica las migraciones con el README.
+services:
+  - type: web
+    name: biblioteca-web-api
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /biblioteca-backend/api/libros
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: biblioteca-pg
+          property: host
+      - key: DB_NAME
+        value: biblioteca
+      - key: DB_USER
+        value: biblioteca_app
+      - key: DB_PASSWORD
+        sync: false
+      - key: DEMO_API_KEY
+        generateValue: true
