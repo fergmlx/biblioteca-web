@@ -6,5 +6,5 @@ services:
       FLYWAY_USER: ${FLYWAY_USER:?Se requiere el usuario de migraciones}
       FLYWAY_PASSWORD: ${FLYWAY_PASSWORD:?Se requiere su contraseña}
     volumes:
-      - ../db/migrations:/flyway/sql:ro
+      - ${FLYWAY_SQL_DIR:?Ejecuta migrate.sh}:/flyway/sql:ro
     command: migrate

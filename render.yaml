@@ -14,7 +14,9 @@ services:
           name: biblioteca-pg
           property: host
       - key: DB_NAME
-        value: biblioteca
+        fromDatabase:
+          name: biblioteca-pg
+          property: database
       - key: DB_USER
         value: biblioteca_app
       - key: DB_PASSWORD

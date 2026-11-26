@@ -12,12 +12,13 @@ Desde Bash, situado en este repositorio, prepara las variables. Usa el usuario a
 read -rp 'Host externo de Render: ' PGHOST
 read -rp 'Usuario de Render: ' PGUSER
 read -rsp 'Contraseña de Render: ' PGPASSWORD; echo
-export PGHOST PGUSER PGPASSWORD PGPORT=5432 PGDATABASE=biblioteca PGSSLMODE=require
+read -rp 'Nombre físico de la base (Connect): ' PGDATABASE
+export PGHOST PGUSER PGPASSWORD PGDATABASE PGPORT=5432 PGSSLMODE=require
 export BIBLIOTECA_APP_PASSWORD="$(openssl rand -hex 24)"
 psql -X -f database/render/bootstrap.psql
-export FLYWAY_URL="jdbc:postgresql://${PGHOST}:5432/biblioteca?sslmode=require"
+export FLYWAY_URL="jdbc:postgresql://${PGHOST}:5432/${PGDATABASE}?sslmode=require"
 export FLYWAY_USER="$PGUSER" FLYWAY_PASSWORD="$PGPASSWORD"
-docker compose -f database/render/compose.yaml run --rm migrate
+bash database/render/migrate.sh
 psql -X -c 'SELECT id_libro, titulo FROM public.libro ORDER BY titulo'
 ```
 
