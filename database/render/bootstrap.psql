@@ -1,0 +1,22 @@
+\set ON_ERROR_STOP on
+\getenv app_password BIBLIOTECA_APP_PASSWORD
+\if :{?app_password}
+\else
+  \echo 'Define BIBLIOTECA_APP_PASSWORD antes de preparar los roles.'
+  DO $$ BEGIN RAISE EXCEPTION 'Se requiere una contraseña de aplicación válida'; END $$;
+\endif
+
+BEGIN;
+SELECT length(:'app_password') >= 24 AS strong_password \gset
+\if :strong_password
+\else
+  \echo 'Usa una contraseña aleatoria de al menos 24 caracteres.'
+  DO $$ BEGIN RAISE EXCEPTION 'Se requiere una contraseña de aplicación válida'; END $$;
+\endif
+SELECT 'CREATE ROLE biblioteca_owner NOLOGIN' WHERE NOT EXISTS
+  (SELECT FROM pg_roles WHERE rolname = 'biblioteca_owner') \gexec
+SELECT format('CREATE ROLE biblioteca_app LOGIN PASSWORD %L', :'app_password') WHERE NOT EXISTS
+  (SELECT FROM pg_roles WHERE rolname = 'biblioteca_app') \gexec
+GRANT biblioteca_owner TO CURRENT_USER;
+GRANT USAGE, CREATE ON SCHEMA public TO biblioteca_owner;
+COMMIT;
