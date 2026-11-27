@@ -1,0 +1,25 @@
+<app-table-toolbar title="Reseñas" description="Modera las opiniones publicadas por los lectores." />
+<app-data-card
+  [headers]="['Libro', 'Usuario', 'Calificación', 'Comentario', 'Fecha', 'Acciones']"
+  [isEmpty]="rows().length === 0"
+>
+  <ng-container toolbar>
+    <app-admin-search [(value)]="search" placeholder="Buscar en reseñas..." />
+    <app-select [options]="bookOptions()" [(value)]="bookFilter" />
+  </ng-container>
+  <app-empty-state empty title="Sin reseñas" text="No hay reseñas que coincidan con los filtros." />
+  @for (r of rows(); track r.id) {
+    <tr>
+      <td>
+        <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + r.bookId)">
+          {{ title(r.bookId) }}
+        </button>
+      </td>
+      <td><app-user-link [id]="r.userId" /></td>
+      <td><app-stars [value]="r.rating" [size]="15" /></td>
+      <td class="review-quote">{{ r.comment }}</td>
+      <td>{{ fmt(r.date) }}</td>
+      <td><app-actions del (deleted)="remove(r.id)" /></td>
+    </tr>
+  }
+</app-data-card>

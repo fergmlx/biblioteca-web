@@ -1,0 +1,14 @@
+<span [class]="editable() ? 'stars editable' : 'stars'" [attr.aria-label]="value().toFixed(1) + ' de 5'">
+  @for (n of [1, 2, 3, 4, 5]; track n) {
+    <button
+      type="button"
+      [class]="n <= round() ? 'on' : ''"
+      [disabled]="!editable()"
+      [style.font-size.px]="size()"
+      [attr.aria-label]="n + ' estrellas'"
+      (click)="valueChange.emit(n)"
+    >
+      ★
+    </button>
+  }
+</span>

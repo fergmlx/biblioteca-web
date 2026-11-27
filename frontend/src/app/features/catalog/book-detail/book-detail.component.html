@@ -1,0 +1,170 @@
+@if (book(); as book) {
+  <div class="page-shell detail-page">
+    <button type="button" class="back-link" (click)="ui.navigate('/catalogo')">← Volver al catálogo</button>
+    <div class="detail-grid">
+      <section class="card detail-cover">
+        <app-book-cover [title]="book.title" [color]="book.color" size="large" />
+        <span class="copy-note"
+          ><app-icon name="copy" [size]="16" /> {{ book.copiesTotal }} ejemplares ·
+          {{ book.available ? book.copiesFree + " disponibles" : "Sin disponibilidad" }}</span
+        >
+      </section>
+      <div class="detail-content">
+        <app-status [text]="book.available ? 'Disponible' : 'En préstamo'" />
+        <h1>{{ book.title }}</h1>
+        <p class="detail-author">{{ book.author }}</p>
+        @if (book.reviewCount > 0) {
+          <div class="rating-line">
+            <app-stars [value]="book.rating" />
+            <strong>{{ book.rating.toFixed(1) }}</strong>
+            <span>({{ book.reviewCount }} reseñas)</span>
+          </div>
+        }
+        <div class="detail-data">
+          <div>
+            <small>ISBN</small><strong>{{ book.isbn }}</strong>
+          </div>
+          <div>
+            <small>Editorial</small><strong>{{ book.publisher }}</strong>
+          </div>
+          <div>
+            <small>Año</small><strong>{{ book.year }}</strong>
+          </div>
+          <div>
+            <small>Idioma</small><strong>{{ book.language }}</strong>
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button appBtn [variant]="favorite() ? 'primary' : 'secondary'" icon="heart" (click)="toggleFavorite()">
+            {{ favorite() ? "En favoritos" : "Agregar a favoritos" }}
+          </button>
+          @if (borrowed()) {
+            <button appBtn icon="loan" variant="secondary" (click)="ui.navigate('/prestamos')">
+              Ya lo tienes · ver préstamo
+            </button>
+          } @else if (pending()) {
+            <button appBtn icon="clock" variant="secondary" (click)="ui.navigate('/solicitudes')">
+              Solicitud pendiente · ver estado
+            </button>
+          } @else {
+            <button appBtn icon="loan" (click)="startLoan()" [disabled]="!book.available">
+              {{ book.available ? "Solicitar préstamo" : "Sin ejemplares disponibles" }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs detail-tabs">
+      @for (item of tabs(); track item) {
+        <button type="button" [class]="tab() === item ? 'active' : ''" (click)="tab.set(item)">{{ item }}</button>
+      }
+    </div>
+    <section class="card tab-panel">
+      @switch (tabKey()) {
+        @case ("Descripción") {
+          <p class="detail-description">{{ book.description }}</p>
+        }
+        @case ("Autores") {
+          <div class="author-chips">
+            @for (author of bookAuthors(); track author.id) {
+              <button type="button" (click)="ui.navigate('/autores/' + author.id)">
+                <span class="avatar-sm">{{ initials(author.name, author.last) }}</span>
+                <span
+                  ><strong>{{ catalog.authorName(author) }}</strong
+                  ><small>{{ author.country }}</small></span
+                >
+                <app-icon name="arrow" [size]="16" />
+              </button>
+            }
+          </div>
+        }
+        @case ("Géneros") {
+          <div class="genre-chips">
+            @for (g of book.genres; track g) {
+              <button type="button" (click)="ui.navigate('/catalogo?genero=' + encode(g))">
+                {{ g }} <app-icon name="arrow" [size]="14" />
+              </button>
+            }
+            <p class="muted">Toca un género para ver más libros como este.</p>
+          </div>
+        }
+        @case ("Ejemplares") {
+          @if (copies().length) {
+            <div class="copy-list">
+              @for (copy of copies(); track copy.number) {
+                <div>
+                  <span class="code">{{ copy.code }}</span>
+                  <span><app-icon name="pin" [size]="15" /> {{ copy.location }}</span>
+                  <app-status [text]="copy.status" />
+                </div>
+              }
+            </div>
+          } @else {
+            <app-empty-state title="Sin ejemplares" text="Este título aún no tiene ejemplares registrados." />
+          }
+        }
+        @default {
+          <div class="reviews">
+            <div class="review-form">
+              <strong>{{ myReview() ? "Tu reseña" : "Deja tu reseña" }}</strong>
+              <app-stars [value]="rating()" [editable]="true" (valueChange)="rating.set($event)" [size]="26" />
+              <app-textarea
+                label="Comentario"
+                [rows]="3"
+                [(value)]="comment"
+                placeholder="¿Qué te pareció este libro?"
+              />
+              <div>
+                <button appBtn (click)="saveReview()">
+                  {{ myReview() ? "Actualizar reseña" : "Publicar reseña" }}
+                </button>
+                @if (myReview()) {
+                  <button appBtn variant="ghost" icon="trash" (click)="removeReview()">Eliminar</button>
+                }
+              </div>
+            </div>
+            @for (review of reviews(); track review.id) {
+              <article class="review-item">
+                <span class="avatar-sm">{{ short(auth.userName(review.userId)) }}</span>
+                <div>
+                  <strong>{{ auth.userName(review.userId) }}</strong>
+                  <small>{{ fmt(review.date) }}</small>
+                  <app-stars [value]="review.rating" [size]="15" />
+                  @if (review.comment) {
+                    <p>{{ review.comment }}</p>
+                  }
+                </div>
+              </article>
+            } @empty {
+              <app-empty-state title="Aún no hay reseñas" text="Sé la primera persona en opinar sobre este libro." />
+            }
+          </div>
+        }
+      }
+    </section>
+
+    @if (askLoan()) {
+      <app-modal title="Solicitar préstamo" (closed)="askLoan.set(false)">
+        <div class="modal-book">
+          <app-book-cover [title]="book.title" [color]="book.color" size="small" />
+          <div>
+            <strong>{{ book.title }}</strong
+            ><small>{{ book.author }}</small>
+          </div>
+        </div>
+        <ul class="modal-list">
+          <li>El bibliotecario asignará un ejemplar al aprobar tu solicitud.</li>
+          <li>El préstamo dura 14 días y puede renovarse una vez.</li>
+          <li>Seguirás el estado desde “Solicitudes”.</li>
+        </ul>
+        <ng-container modalFooter>
+          <button appBtn variant="secondary" (click)="askLoan.set(false)">Cancelar</button>
+          <button appBtn icon="check" (click)="confirmLoan()">Enviar solicitud</button>
+        </ng-container>
+      </app-modal>
+    }
+  </div>
+} @else {
+  <app-not-found />
+}

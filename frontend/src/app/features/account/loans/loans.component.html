@@ -1,0 +1,66 @@
+<div class="page-shell">
+  <app-page-header
+    eyebrow="Mi biblioteca"
+    title="Mis préstamos"
+    description="Consulta tus libros actuales y el historial de devoluciones."
+  >
+    <button appBtn (click)="ui.navigate('/catalogo')">Explorar catálogo</button>
+  </app-page-header>
+  @if (pending().length > 0) {
+    <button type="button" class="notice-bar" (click)="ui.navigate('/solicitudes')">
+      <app-icon name="clock" [size]="18" />
+      <span
+        >Tienes <strong>{{ pending().length }}</strong>
+        {{ pending().length === 1 ? "solicitud pendiente" : "solicitudes pendientes" }} de aprobación</span
+      >
+      <app-icon name="arrow" [size]="16" />
+    </button>
+  }
+  <div class="tabs">
+    @for (item of ["Actuales", "Anteriores", "Todos"]; track item) {
+      <button type="button" [class]="tab() === item ? 'active' : ''" (click)="tab.set(item)">{{ item }}</button>
+    }
+  </div>
+  @if (visible().length) {
+    <app-data-table [headers]="['Libro', 'Fecha del préstamo', 'Fecha límite', 'Fecha de devolución', 'Estado', '']">
+      @for (loan of visible(); track loan.id) {
+        @let book = bookOf(loan.bookId);
+        @let left = daysLeft(loan.due);
+        <tr>
+          <td>
+            <button type="button" class="table-book link" (click)="ui.navigate('/libros/' + book.id)">
+              <app-book-cover [title]="book.title" [color]="book.color" size="small" />
+              <div>
+                <strong>{{ book.title }}</strong
+                ><small>{{ book.author }}</small>
+              </div>
+            </button>
+          </td>
+          <td>{{ fmt(loan.date) }}</td>
+          <td>
+            {{ fmt(loan.due) }}
+            @if (loan.status !== "Devuelto") {
+              <small [class]="left < 0 ? 'due late' : 'due'">{{
+                left < 0 ? -left + " días de retraso" : left === 0 ? "vence hoy" : left + " días restantes"
+              }}</small>
+            }
+          </td>
+          <td>{{ fmt(loan.returned) }}</td>
+          <td><app-status [text]="loan.status" /></td>
+          <td>
+            @if (canRenew(loan)) {
+              <button appBtn class="small" variant="secondary" (click)="renew(loan.id, book.title)">Renovar</button>
+            } @else if (loan.status === "Devuelto") {
+              <button appBtn class="small" variant="ghost" (click)="ui.navigate('/libros/' + book.id)">Reseñar</button>
+            }
+          </td>
+        </tr>
+      }
+    </app-data-table>
+  } @else {
+    <app-empty-state
+      title="Sin préstamos en esta vista"
+      text="Cuando la biblioteca apruebe una solicitud, tu préstamo aparecerá aquí."
+    />
+  }
+</div>

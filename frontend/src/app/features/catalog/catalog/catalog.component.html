@@ -1,0 +1,53 @@
+<div class="page-shell">
+  <app-page-header
+    eyebrow="Catálogo"
+    title="Encuentra tu próxima lectura"
+    [description]="filtered().length + ' títulos coinciden con tu búsqueda'"
+  />
+  <div class="catalog-tools">
+    <div class="search-box">
+      <app-icon name="search" />
+      <input
+        [value]="query()"
+        (input)="pickQuery($any($event.target).value)"
+        placeholder="Buscar libros, autores o géneros..."
+      />
+    </div>
+    <button appBtn variant="secondary" (click)="reset()">Limpiar filtros</button>
+  </div>
+  <div class="catalog-layout">
+    <section class="card filter-panel">
+      <div class="filter-title">
+        <strong>Filtros</strong><span>{{ filtered().length }}</span>
+      </div>
+      <app-select label="Género" [options]="genres()" [value]="genre()" (valueChange)="pick(genre, $event)" />
+      <app-select label="Autor" [options]="authors()" [value]="author()" (valueChange)="pick(author, $event)" />
+      <app-select label="Idioma" [options]="langs" [value]="language()" (valueChange)="pick(language, $event)" />
+      <app-select label="Año de publicación" [options]="eras" [value]="era()" (valueChange)="pick(era, $event)" />
+      <app-select
+        label="Disponibilidad"
+        [options]="avail"
+        [value]="availability()"
+        (valueChange)="pick(availability, $event)"
+      />
+    </section>
+    <div>
+      @if (shown().length) {
+        <div class="catalog-grid">
+          @for (book of shown(); track book.id) {
+            <app-book-card [book]="book" />
+          }
+        </div>
+      } @else {
+        <app-empty-state title="No encontramos libros" text="Prueba con otros términos o limpia los filtros." />
+      }
+      <div class="pagination">
+        <button type="button" [disabled]="current() === 1" (click)="page.set(current() - 1)">Anterior</button>
+        @for (n of pageNumbers(); track n) {
+          <button type="button" [class]="current() === n ? 'active' : ''" (click)="page.set(n)">{{ n }}</button>
+        }
+        <button type="button" [disabled]="current() >= pages()" (click)="page.set(current() + 1)">Siguiente</button>
+      </div>
+    </div>
+  </div>
+</div>

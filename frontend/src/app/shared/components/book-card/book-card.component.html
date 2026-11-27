@@ -1,0 +1,26 @@
+<article class="book-card">
+  <div class="book-card-cover">
+    <app-book-cover [title]="book().title" [color]="book().color" />
+    <button
+      type="button"
+      [class]="favorite() ? 'fav-toggle on' : 'fav-toggle'"
+      (click)="toggle()"
+      [attr.aria-label]="favorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+    >
+      <app-icon name="heart" [size]="17" />
+    </button>
+  </div>
+  <div class="book-card-body">
+    <app-status [text]="book().available ? 'Disponible' : 'En préstamo'" />
+    <h3>{{ book().title }}</h3>
+    <p>{{ book().author }}</p>
+    <div class="book-tags">
+      <span>{{ book().genres[0] }}</span>
+      <span>{{ book().year }}</span>
+      @if (book().reviewCount > 0) {
+        <span>★ {{ book().rating.toFixed(1) }}</span>
+      }
+    </div>
+    <button appBtn variant="secondary" (click)="ui.navigate('/libros/' + book().id)">Ver detalle</button>
+  </div>
+</article>

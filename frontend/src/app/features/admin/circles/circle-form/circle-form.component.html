@@ -1,0 +1,54 @@
+@if (missing()) {
+  <app-admin-not-found what="Círculo" back="Volver a círculos" to="/admin/circulos" />
+} @else {
+  <app-crumbs
+    [items]="[{ label: 'Círculos', to: '/admin/circulos' }, { label: circle() ? 'Editar círculo' : 'Nuevo círculo' }]"
+  />
+  <app-page-header
+    eyebrow="Círculos de lectura"
+    [title]="circle() ? 'Editar: ' + circle()!.name : 'Nuevo círculo'"
+    description="Define horario, cupo y libro del círculo."
+  />
+  <form (submit)="submit($event)">
+    <section class="card form-section">
+      <div class="form-grid">
+        <app-field label="Nombre" [required]="true" [value]="f().name" (valueChange)="set('name', $event)" />
+        <app-select
+          label="Libro asociado (opcional)"
+          [options]="bookOptions()"
+          [value]="f().bookId"
+          (valueChange)="set('bookId', $event)"
+        />
+        <app-field
+          [label]="f().bookId ? 'Tema (opcional)' : 'Tema'"
+          [required]="!f().bookId"
+          [value]="f().topic"
+          (valueChange)="set('topic', $event)"
+        />
+        <app-select label="Día" [options]="weekdays" [value]="f().day" (valueChange)="set('day', $event)" />
+        <app-field label="Hora" type="time" [value]="f().time" (valueChange)="set('time', $event)" />
+        <app-field
+          label="Cupo máximo"
+          type="number"
+          [required]="true"
+          [value]="f().capacity"
+          (valueChange)="set('capacity', $event)"
+        />
+        <app-field label="Fecha de inicio" type="date" [value]="f().start" (valueChange)="set('start', $event)" />
+        <app-field label="Fecha de fin" type="date" [value]="f().end" (valueChange)="set('end', $event)" />
+        <div class="span-2">
+          <app-textarea
+            label="Descripción"
+            [rows]="3"
+            [value]="f().description"
+            (valueChange)="set('description', $event)"
+          />
+        </div>
+      </div>
+    </section>
+    <div class="form-footer">
+      <button appBtn variant="secondary" (click)="ui.navigate('/admin/circulos')">Cancelar</button>
+      <button appBtn type="submit" class="admin-button">{{ circle() ? "Guardar cambios" : "Crear círculo" }}</button>
+    </div>
+  </form>
+}

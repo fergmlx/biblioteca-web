@@ -1,0 +1,39 @@
+<app-table-toolbar
+  title="Géneros literarios"
+  description="Clasificación que se usa en los filtros del catálogo."
+  action="Nuevo género"
+  (act)="modal.set({ name: '' })"
+/>
+<app-data-card [headers]="['Género', 'Libros', 'Acciones']" [isEmpty]="store.db().genres.length === 0">
+  <app-empty-state empty title="Sin géneros" text="Crea el primer género." />
+  @for (g of store.db().genres; track g.id) {
+    @let used = usage(g.name);
+    <tr>
+      <td>
+        <strong>{{ g.name }}</strong>
+      </td>
+      <td>
+        @if (used > 0) {
+          <button type="button" class="link-btn" (click)="ui.navigate('/admin/libros')">
+            {{ used }} libro{{ used === 1 ? "" : "s" }}
+          </button>
+        } @else {
+          <span class="muted-cell">Sin uso</span>
+        }
+      </td>
+      <td><app-actions edit del (edited)="edit(g.id, g.name)" (deleted)="remove(g.id, g.name)" /></td>
+    </tr>
+  }
+</app-data-card>
+@if (modal(); as m) {
+  <app-modal [admin]="true" [title]="m.id ? 'Renombrar género' : 'Nuevo género'" (closed)="modal.set(null)">
+    <app-field label="Nombre del género" [required]="true" [value]="name()" (valueChange)="name.set($event)" />
+    @if (m.id) {
+      <p class="form-hint">Los libros que usan este género se actualizarán automáticamente.</p>
+    }
+    <ng-container modalFooter>
+      <button appBtn variant="secondary" (click)="modal.set(null)">Cancelar</button>
+      <button appBtn class="admin-button" (click)="save()">Guardar</button>
+    </ng-container>
+  </app-modal>
+}

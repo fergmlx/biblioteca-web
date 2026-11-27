@@ -1,0 +1,47 @@
+<div class="page-shell">
+  <app-page-header
+    eyebrow="Mi biblioteca"
+    title="Mis solicitudes"
+    description="Sigue el estado de los libros que pediste en préstamo."
+  >
+    <button appBtn (click)="ui.navigate('/catalogo')">Solicitar otro libro</button>
+  </app-page-header>
+  @if (items().length) {
+    <div class="request-list">
+      @for (request of items(); track request.id) {
+        @let book = bookOf(request.bookId);
+        <section class="card request-item">
+          <app-book-cover [title]="book.title" [color]="book.color" size="small" />
+          <div class="request-info">
+            <app-status [text]="request.status" />
+            <h3>{{ book.title }}</h3>
+            <p>{{ book.author }}</p>
+            <small
+              >Solicitado el {{ fmt(request.date)
+              }}{{ request.answered ? " · respuesta el " + fmt(request.answered) : "" }}</small
+            >
+            @if (request.notes) {
+              <p class="request-note">“{{ request.notes }}”</p>
+            }
+          </div>
+          <div class="favorite-actions">
+            @if (request.status === "Pendiente") {
+              <button appBtn variant="ghost" icon="x" (click)="cancel(request.id, book.title)">Cancelar</button>
+            }
+            @if (request.status === "Aprobada") {
+              <button appBtn icon="loan" (click)="ui.navigate('/prestamos')">Ver préstamo</button>
+            }
+            @if (request.status === "Rechazada" || request.status === "Cancelada") {
+              <button appBtn variant="secondary" (click)="ui.navigate('/libros/' + book.id)">Ver libro</button>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  } @else {
+    <app-empty-state
+      title="Aún no has solicitado libros"
+      text="Encuentra un título disponible en el catálogo y pídelo en préstamo."
+    />
+  }
+</div>

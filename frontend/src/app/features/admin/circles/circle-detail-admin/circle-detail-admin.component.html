@@ -1,0 +1,81 @@
+@if (circle(); as circle) {
+  <app-crumbs [items]="[{ label: 'Círculos', to: '/admin/circulos' }, { label: circle.name }]" />
+  <app-page-header eyebrow="Círculo de lectura" [title]="circle.name" [description]="circle.description">
+    <div class="row-buttons">
+      <button appBtn variant="secondary" (click)="ui.navigate('/admin/circulos')">Volver</button>
+      <button appBtn class="admin-button" icon="edit" (click)="ui.navigate('/admin/circulos/' + circle.id + '/editar')">
+        Editar
+      </button>
+    </div>
+  </app-page-header>
+  <div class="detail-two">
+    <section class="card">
+      <div class="card-title">
+        <h2>Información</h2>
+        <app-status [text]="circle.active ? 'Activo' : 'Inactivo'" />
+      </div>
+      <div class="info-list">
+        <div>
+          <span>Tema</span><strong>{{ circle.topic || "—" }}</strong>
+        </div>
+        <div>
+          <span>Libro</span>
+          @if (book(); as b) {
+            <button type="button" class="link-btn" (click)="ui.navigate('/libros/' + b.id)">{{ b.title }}</button>
+          } @else {
+            <strong>Sin libro asociado</strong>
+          }
+        </div>
+        <div>
+          <span>Horario</span><strong>{{ circle.day }} · {{ circle.time }}</strong>
+        </div>
+        <div>
+          <span>Periodo</span><strong>{{ fmt(circle.start) }} — {{ fmt(circle.end) }}</strong>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="card-title"><h2>Cupo</h2></div>
+      <div class="mini-stats" style="grid-template-columns: repeat(3, 1fr)">
+        <app-mini-stat label="Inscritos" [value]="circle.enrolled" />
+        <app-mini-stat label="Capacidad" [value]="circle.capacity" />
+        <app-mini-stat label="Libres" [value]="circle.seatsLeft" />
+      </div>
+      <div class="capacity large"><span [style.width.%]="pct()"></span></div>
+      @if (circle.enrolledBase > 0) {
+        <small class="muted">Incluye {{ circle.enrolledBase }} participantes registrados previamente.</small>
+      }
+    </section>
+  </div>
+  <section class="card table-card">
+    <div class="card-title" style="padding: 20px 22px 0"><h2>Participantes</h2></div>
+    @if (members().length === 0) {
+      <app-empty-state title="Sin participantes" text="Todavía nadie se ha inscrito desde el sitio." />
+    } @else {
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Fecha de inscripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of members(); track e.id) {
+              <tr>
+                <td><app-user-link [id]="e.userId" /></td>
+                <td>{{ fmt(e.date) }}</td>
+                <td><app-status [text]="e.status" /></td>
+                <td><app-enrollment-buttons [enrollment]="e" /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+} @else {
+  <app-admin-not-found what="Círculo" back="Volver a círculos" to="/admin/circulos" />
+}

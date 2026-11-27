@@ -1,0 +1,35 @@
+<app-table-toolbar
+  title="Gestión de autores"
+  description="Mantén actualizada la información de autores del catálogo."
+  action="Nuevo autor"
+  (act)="ui.navigate('/admin/autores/nuevo')"
+/>
+<app-data-card
+  [headers]="['Nombre', 'Apellidos', 'País', 'Nacimiento', 'Libros', 'Estado', 'Acciones']"
+  [isEmpty]="data().length === 0"
+>
+  <app-admin-search toolbar [(value)]="search" placeholder="Buscar autores..." />
+  <app-empty-state empty title="Sin autores" text="No hay autores que coincidan con la búsqueda." />
+  <span footer>Mostrando {{ data().length }} de {{ store.db().authors.length }} autores</span>
+  @for (author of data(); track author.id) {
+    <tr>
+      <td>
+        <strong>{{ author.name }}</strong>
+      </td>
+      <td>{{ (author.last + " " + author.maternal).trim() }}</td>
+      <td>{{ author.country }}</td>
+      <td>{{ fmt(author.birth) }}</td>
+      <td>{{ countBooks(author.id) }}</td>
+      <td><app-status [text]="author.active ? 'Activo' : 'Inactivo'" /></td>
+      <td>
+        <app-actions
+          edit
+          toggle
+          [active]="author.active"
+          (edited)="ui.navigate('/admin/autores/' + author.id + '/editar')"
+          (toggled)="toggle(author.id, author.active, catalog.authorName(author))"
+        />
+      </td>
+    </tr>
+  }
+</app-data-card>

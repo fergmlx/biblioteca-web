@@ -1,0 +1,22 @@
+<section class="card table-card">
+  <div class="table-toolbar"><ng-content select="[toolbar]" /></div>
+  @if (isEmpty()) {
+    <ng-content select="[empty]" />
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            @for (h of headers(); track $index) {
+              <th>{{ h }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <ng-content />
+        </tbody>
+      </table>
+    </div>
+  }
+  <div class="table-footer"><ng-content select="[footer]" /></div>
+</section>

@@ -1,0 +1,9 @@
+<label class="field">
+  <span>{{ label() }}</span>
+  <textarea
+    [rows]="rows()"
+    [value]="value()"
+    [placeholder]="placeholder()"
+    (input)="value.set($any($event.target).value)"
+  ></textarea>
+</label>

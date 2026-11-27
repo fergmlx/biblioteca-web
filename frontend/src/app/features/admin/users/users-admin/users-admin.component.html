@@ -1,0 +1,44 @@
+<app-table-toolbar
+  title="Gestión de usuarios"
+  description="Administra cuentas, roles y estado de acceso."
+  action="Nuevo usuario"
+  (act)="ui.navigate('/admin/usuarios/nuevo')"
+/>
+<app-data-card
+  [headers]="['N.º socio', 'Nombre', 'Correo', 'Rol', 'Préstamos activos', 'Estado', 'Acciones']"
+  [isEmpty]="data().length === 0"
+>
+  <ng-container toolbar>
+    <app-admin-search [(value)]="search" placeholder="Buscar por nombre, socio o correo..." />
+    <app-select [options]="roles" [(value)]="role" />
+  </ng-container>
+  <app-empty-state empty title="Sin usuarios" text="Ninguna cuenta coincide con los filtros." />
+  <span footer>Mostrando {{ data().length }} de {{ store.db().accounts.length }} usuarios</span>
+  @for (account of data(); track account.id) {
+    <tr>
+      <td>
+        <span class="code">{{ account.member }}</span>
+      </td>
+      <td>
+        <button type="button" class="link-btn" (click)="ui.navigate('/admin/usuarios/' + account.id)">
+          {{ account.name }} {{ account.last }}
+        </button>
+      </td>
+      <td>{{ account.email }}</td>
+      <td><app-status [text]="account.role" /></td>
+      <td>{{ activeLoans(account.id) }}</td>
+      <td><app-status [text]="account.active ? 'Activo' : 'Inactivo'" /></td>
+      <td>
+        <app-actions
+          view
+          edit
+          toggle
+          [active]="account.active"
+          (viewed)="ui.navigate('/admin/usuarios/' + account.id)"
+          (edited)="ui.navigate('/admin/usuarios/' + account.id + '/editar')"
+          (toggled)="toggle(account)"
+        />
+      </td>
+    </tr>
+  }
+</app-data-card>

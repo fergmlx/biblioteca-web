@@ -1,0 +1,110 @@
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow light">Biblioteca digital y presencial</span>
+      <h1>No hay mejor fragata<br /><em>que un libro para llevarnos lejos.</em></h1>
+      <cite class="hero-cite">— Emily Dickinson</cite>
+      <p>
+        Explora nuestro catálogo, solicita préstamos y comparte lecturas con una comunidad que disfruta descubrir nuevos
+        mundos.
+      </p>
+      <form class="hero-search" (submit)="submitSearch($event)">
+        <app-icon name="search" />
+        <input
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+          placeholder="Busca por título, autor o género..."
+        />
+        <button>Buscar</button>
+      </form>
+      <div class="hero-meta">
+        <span><app-icon name="book" [size]="17" /> {{ activeBooks().length }} títulos en el catálogo</span>
+        <span><app-icon name="users" [size]="17" /> {{ activeCircles().length }} círculos activos</span>
+      </div>
+    </div>
+  </section>
+
+  @if (auth.user(); as mine) {
+    <section class="home-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Tu espacio</span>
+          <h2>Hola, {{ mine.name }}. Esto es lo que sigue.</h2>
+        </div>
+      </div>
+      <div class="summary-strip">
+        @for (s of summary(); track s[2]) {
+          <button type="button" (click)="ui.navigate(s[3])">
+            <span class="quick-icon"><app-icon [name]="s[0]" [size]="22" /></span>
+            <strong>{{ s[1] }}</strong>
+            <small>{{ s[2] }}</small>
+          </button>
+        }
+      </div>
+    </section>
+  } @else {
+    <section class="home-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Explora la biblioteca</span>
+          <h2>Todo lo que necesitas, en un solo lugar</h2>
+        </div>
+      </div>
+      <div class="quick-grid">
+        @for (q of quick; track q[1]) {
+          <button type="button" class="quick-card" (click)="ui.navigate(q[3])">
+            <span class="quick-icon"><app-icon [name]="q[0]" [size]="26" /></span>
+            <span
+              ><strong>{{ q[1] }}</strong
+              ><small>{{ q[2] }}</small></span
+            >
+            <app-icon name="arrow" [size]="18" />
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="featured-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Selección de la semana</span>
+        <h2>Libros destacados</h2>
+      </div>
+      <button appBtn variant="ghost" (click)="ui.navigate('/catalogo')">
+        Ver catálogo <app-icon name="arrow" [size]="16" />
+      </button>
+    </div>
+    <div class="book-row">
+      @for (book of activeBooks().slice(0, 4); track book.id) {
+        <app-book-card [book]="book" />
+      }
+    </div>
+  </section>
+
+  @if (activeCircles().length > 0) {
+    <section class="home-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Lectura en comunidad</span>
+          <h2>Próximos círculos</h2>
+        </div>
+        <button appBtn variant="ghost" (click)="ui.navigate('/circulos')">
+          Ver todos <app-icon name="arrow" [size]="16" />
+        </button>
+      </div>
+      <div class="mini-circle-row">
+        @for (circle of activeCircles().slice(0, 3); track circle.id) {
+          <button type="button" (click)="ui.navigate('/circulos/' + circle.id)">
+            <span class="quick-icon"><app-icon name="users" [size]="22" /></span>
+            <span
+              ><strong>{{ circle.name }}</strong
+              ><small>{{ circle.day }} · {{ circle.time }} · {{ circle.seatsLeft }} lugares</small></span
+            >
+            <app-icon name="arrow" [size]="16" />
+          </button>
+        }
+      </div>
+    </section>
+  }
+</main>

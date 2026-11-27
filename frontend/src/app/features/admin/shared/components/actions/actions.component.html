@@ -1,0 +1,24 @@
+<div class="table-actions">
+  @if (view()) {
+    <button type="button" title="Consultar" (click)="viewed.emit()"><app-icon name="eye" [size]="17" /></button>
+  }
+  @if (edit()) {
+    <button type="button" title="Editar" (click)="edited.emit()"><app-icon name="edit" [size]="17" /></button>
+  }
+  <ng-content />
+  @if (toggle()) {
+    <button
+      type="button"
+      [class]="active() ? 'danger' : ''"
+      [title]="active() ? 'Desactivar' : 'Activar'"
+      (click)="toggled.emit()"
+    >
+      <app-icon [name]="active() ? 'x' : 'check'" [size]="17" />
+    </button>
+  }
+  @if (del()) {
+    <button type="button" class="danger" title="Eliminar" (click)="deleted.emit()">
+      <app-icon name="trash" [size]="17" />
+    </button>
+  }
+</div>

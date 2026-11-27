@@ -1,0 +1,29 @@
+<div class="page-shell">
+  <app-page-header eyebrow="Mi biblioteca" title="Mis círculos" description="Tus inscripciones actuales e historial.">
+    <button appBtn (click)="ui.navigate('/circulos')">Ver círculos</button>
+  </app-page-header>
+  @if (items().length) {
+    <div class="request-list">
+      @for (enrollment of items(); track enrollment.id) {
+        @let circle = circleOf(enrollment.circleId);
+        <section class="card request-item">
+          <span class="circle-chip"><app-icon name="users" [size]="26" /></span>
+          <div class="request-info">
+            <app-status [text]="enrollment.status === 'Activa' ? 'Confirmada' : enrollment.status" />
+            <h3>{{ circle.name }}</h3>
+            <p>{{ circle.day }} · {{ circle.time }} · {{ circle.topic }}</p>
+            <small>Inscrito el {{ fmt(enrollment.date) }}</small>
+          </div>
+          <div class="favorite-actions">
+            <button appBtn variant="secondary" (click)="ui.navigate('/circulos/' + circle.id)">Ver círculo</button>
+            @if (enrollment.status !== "Cancelada") {
+              <button appBtn variant="ghost" icon="x" (click)="cancel(enrollment.id, circle.name)">Cancelar</button>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  } @else {
+    <app-empty-state title="Aún no estás en ningún círculo" text="Únete a una conversación y comparte tus lecturas." />
+  }
+</div>

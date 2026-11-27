@@ -1,0 +1,43 @@
+<div class="admin-shell">
+  <aside [class]="mobileOpen() ? 'admin-sidebar open' : 'admin-sidebar'">
+    <button type="button" class="admin-logo" (click)="go('/admin')">
+      <span><app-icon name="book" /></span>
+      <div>Biblioteca<small>Administración</small></div>
+    </button>
+    <nav>
+      @for (g of nav; track g.group) {
+        <div>
+          <div class="nav-group">{{ g.group }}</div>
+          @for (item of g.items; track item[2]) {
+            <button type="button" [class]="isActive(item[2]) ? 'active' : ''" (click)="go(item[2])">
+              <app-icon [name]="item[0]" />
+              <span>{{ item[1] }}</span>
+              @if (item[3] && badges()[item[3]] > 0) {
+                <em class="nav-badge">{{ badges()[item[3]] }}</em>
+              }
+            </button>
+          }
+        </div>
+      }
+    </nav>
+    <div class="sidebar-bottom">
+      <button type="button" (click)="go('/')"><app-icon name="home" /> Ver sitio público</button>
+      <button type="button" (click)="logout()"><app-icon name="logout" /> Cerrar sesión</button>
+    </div>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button type="button" class="admin-menu-button" (click)="mobileOpen.set(!mobileOpen())" aria-label="Menú">
+        <app-icon name="menu" />
+      </button>
+      <button type="button" class="admin-user" (click)="ui.navigate('/admin/perfil')">
+        <span>{{ auth.user() ? initials(auth.user()!.name, auth.user()!.last) : "AD" }}</span>
+        <div>
+          <strong>{{ auth.user() ? auth.user()!.name + " " + auth.user()!.last : "Administrador" }}</strong>
+          <small>{{ auth.user()?.role || "Administrador" }}</small>
+        </div>
+      </button>
+    </header>
+    <main class="admin-content"><router-outlet /></main>
+  </div>
+</div>

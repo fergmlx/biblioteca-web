@@ -1,0 +1,16 @@
+<div class="admin-tabs" role="tablist">
+  @for (tab of tabs(); track tab.id) {
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab.id === value()"
+      [class]="tab.id === value() ? 'active' : ''"
+      (click)="value.set(tab.id)"
+    >
+      {{ tab.label }}
+      @if (tab.count !== undefined) {
+        <em>{{ tab.count }}</em>
+      }
+    </button>
+  }
+</div>

@@ -1,0 +1,36 @@
+<header class="public-header">
+  <button type="button" class="brand" (click)="go('/')" aria-label="Ir al inicio">
+    <span class="brand-icon"><app-icon name="book" /></span>
+    <span>Biblioteca<span class="brand-dot">.</span></span>
+  </button>
+  <nav [class]="open() ? 'public-nav is-open' : 'public-nav'">
+    @for (l of links(); track l[0]) {
+      <button type="button" [class]="isActive(l[0]) ? 'active' : ''" (click)="go(l[0])">
+        {{ l[1] }}
+        @if (l[2]) {
+          <span class="nav-badge">{{ l[2] }}</span>
+        }
+      </button>
+    }
+  </nav>
+  <div class="header-actions">
+    @if (auth.user(); as mine) {
+      @if (auth.role() === "admin") {
+        <button appBtn variant="secondary" icon="settings" (click)="go('/admin')">Panel admin</button>
+      }
+      <button type="button" class="avatar-button" (click)="go('/perfil')">
+        <span>{{ initials(mine.name, mine.last) }}</span>
+        <div>
+          <strong>{{ mine.name }} {{ mine.last }}</strong
+          ><small>Mi perfil</small>
+        </div>
+      </button>
+    } @else {
+      <button appBtn variant="ghost" (click)="go('/login')">Iniciar sesión</button>
+      <button appBtn (click)="go('/registro')">Crear cuenta</button>
+    }
+    <button type="button" class="mobile-menu" (click)="open.set(!open())" aria-label="Abrir menú">
+      <app-icon [name]="open() ? 'x' : 'menu'" />
+    </button>
+  </div>
+</header>

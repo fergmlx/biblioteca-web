@@ -1,0 +1,33 @@
+<app-table-toolbar
+  title="Inscripciones y reportes"
+  description="Confirma solicitudes y exporta la actividad de los círculos."
+  action="Exportar reporte"
+  icon="download"
+  (act)="exportReport()"
+/>
+<div class="mini-stats">
+  <app-mini-stat label="Total" [value]="all().length" />
+  <app-mini-stat label="Confirmadas" [value]="count('Activa')" />
+  <app-mini-stat label="Pendientes" [value]="count('Pendiente')" />
+  <app-mini-stat label="Canceladas" [value]="count('Cancelada')" />
+</div>
+<app-data-card [headers]="['Usuario', 'Círculo', 'Fecha', 'Estado', 'Acciones']" [isEmpty]="rows().length === 0">
+  <ng-container toolbar>
+    <app-admin-search [(value)]="search" placeholder="Buscar usuario o círculo..." />
+    <app-select [options]="states" [(value)]="state" />
+  </ng-container>
+  <app-empty-state empty title="Sin inscripciones" text="Ninguna inscripción coincide con los filtros." />
+  @for (e of rows(); track e.id) {
+    <tr>
+      <td><app-user-link [id]="e.userId" /></td>
+      <td>
+        <button type="button" class="link-btn" (click)="ui.navigate('/admin/circulos/' + e.circleId)">
+          {{ circleName(e.circleId) }}
+        </button>
+      </td>
+      <td>{{ fmt(e.date) }}</td>
+      <td><app-status [text]="e.status" /></td>
+      <td><app-enrollment-buttons [enrollment]="e" /></td>
+    </tr>
+  }
+</app-data-card>

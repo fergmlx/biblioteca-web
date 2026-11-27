@@ -1,0 +1,10 @@
+<div class="row-buttons">
+  @if (enrollment().status !== "Activa") {
+    <button appBtn class="small admin-button" (click)="confirm()">
+      {{ enrollment().status === "Cancelada" ? "Reactivar" : "Confirmar" }}
+    </button>
+  }
+  @if (enrollment().status !== "Cancelada") {
+    <button appBtn class="small" variant="ghost" (click)="cancel()">Cancelar</button>
+  }
+</div>

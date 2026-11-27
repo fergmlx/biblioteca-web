@@ -1,0 +1,61 @@
+@if (missing()) {
+  <app-admin-not-found what="Usuario" back="Volver a usuarios" to="/admin/usuarios" />
+} @else {
+  <app-crumbs [items]="crumbs()" />
+  <app-page-header
+    eyebrow="Gestión de usuarios"
+    [title]="account() ? 'Editar: ' + account()!.name + ' ' + account()!.last : 'Nuevo usuario'"
+    description="Datos de la cuenta, rol y estado de acceso."
+  />
+  <form (submit)="submit($event)">
+    <section class="card form-section">
+      <div class="form-grid">
+        <app-field
+          label="Número de socio"
+          [required]="true"
+          [value]="f().member"
+          (valueChange)="set('member', $event)"
+        />
+        <app-field
+          label="Correo electrónico"
+          [required]="true"
+          type="email"
+          [value]="f().email"
+          (valueChange)="set('email', $event)"
+        />
+        <app-field label="Nombres" [required]="true" [value]="f().name" (valueChange)="set('name', $event)" />
+        <app-field label="Apellidos" [required]="true" [value]="f().last" (valueChange)="set('last', $event)" />
+        <app-field label="Teléfono" [value]="f().phone" (valueChange)="set('phone', $event)" />
+        <app-field
+          [label]="account() ? 'Nueva contraseña (opcional)' : 'Contraseña'"
+          type="password"
+          [required]="!account()"
+          [value]="f().password"
+          (valueChange)="set('password', $event)"
+        />
+        <app-select
+          label="Rol"
+          [options]="['Usuario', 'Administrador']"
+          [value]="f().role"
+          (valueChange)="set('role', $event)"
+        />
+        <app-select
+          label="Estado"
+          [options]="['Activo', 'Inactivo']"
+          [value]="f().state"
+          (valueChange)="set('state', $event)"
+        />
+      </div>
+    </section>
+    <div class="form-footer">
+      <button
+        appBtn
+        variant="secondary"
+        (click)="ui.navigate(account() ? '/admin/usuarios/' + account()!.id : '/admin/usuarios')"
+      >
+        Cancelar
+      </button>
+      <button appBtn type="submit" class="admin-button">{{ account() ? "Guardar cambios" : "Crear usuario" }}</button>
+    </div>
+  </form>
+}

@@ -1,0 +1,76 @@
+<app-crumbs [items]="[{ label: 'Préstamos', to: '/admin/prestamos' }, { label: 'Registrar préstamo' }]" />
+<app-page-header
+  eyebrow="Gestión de préstamos"
+  title="Registrar préstamo"
+  description="Entrega un ejemplar a un usuario activo."
+/>
+<form (submit)="submit($event)">
+  <div class="admin-form-grid">
+    <section class="card form-section">
+      <div class="form-grid">
+        <app-select label="Usuario" [options]="userOptions()" [(value)]="userId" />
+        <app-select
+          label="Libro"
+          [options]="bookOptions()"
+          [value]="bookId()"
+          (valueChange)="bookId.set($event); copyChoice.set('')"
+        />
+        @if (free().length) {
+          <app-select
+            label="Ejemplar"
+            [options]="copyOptions()"
+            [value]="copy()"
+            (valueChange)="copyChoice.set($event)"
+          />
+        } @else {
+          <div class="field">
+            <span>Ejemplar</span>
+            <div class="banner warn" style="margin: 0">
+              <span>Sin ejemplares libres.</span>
+              <button
+                appBtn
+                class="small"
+                variant="secondary"
+                (click)="ui.navigate('/admin/ejemplares?libro=' + bookId())"
+              >
+                Ver ejemplares
+              </button>
+            </div>
+          </div>
+        }
+        <app-select label="Plazo" [options]="terms" [(value)]="days" />
+      </div>
+    </section>
+    <section class="card summary-card">
+      <h3>Resumen</h3>
+      @if (selectedBook(); as b) {
+        <div class="selected-book" style="padding: 0; border: 0; box-shadow: none">
+          <app-book-cover [title]="b.title" [color]="b.color" size="small" />
+          <div>
+            <strong>{{ b.title }}</strong
+            ><span>{{ b.author }}</span>
+          </div>
+        </div>
+      }
+      <div class="info-list" style="margin-top: 14px">
+        <div>
+          <span>Usuario</span
+          ><strong>{{ selectedUser() ? selectedUser()!.name + " " + selectedUser()!.last : "—" }}</strong>
+        </div>
+        <div>
+          <span>Ejemplar</span><strong>{{ selectedCopy()?.code || "—" }}</strong>
+        </div>
+        <div>
+          <span>Fecha de préstamo</span><strong>{{ fmt(today) }}</strong>
+        </div>
+        <div>
+          <span>Fecha límite</span><strong>{{ fmt(due()) }}</strong>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="form-footer">
+    <button appBtn variant="secondary" (click)="ui.navigate('/admin/prestamos')">Cancelar</button>
+    <button appBtn type="submit" class="admin-button" [disabled]="!copy() || !userId()">Registrar préstamo</button>
+  </div>
+</form>
